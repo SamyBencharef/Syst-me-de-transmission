@@ -1,89 +1,35 @@
 package transmetteurs;
 
-import sources.*;
-import destinations.*;
-import information.*;
+import destinations.DestinationInterface;
+import information.Information;
+import information.InformationNonConforme;
+import sources.SourceInterface;
 
-import java.util.*;
+import java.util.LinkedList;
 
-/** 
+/**
  * Classe Abstraite d'un composant transmetteur d'informations dont
  * les éléments sont de type R en entrée et de type E en sortie;
  * l'entrée du transmetteur implémente l'interface
  * DestinationInterface, la sortie du transmetteur implémente
  * l'interface SourceInterface
+ *
  * @author prou
  */
-public abstract  class Transmetteur <R,E> implements  DestinationInterface <R>, SourceInterface <E> {
-   
-    /** 
-     * la liste des composants destination connectés en sortie du transmetteur 
-     */
-    protected LinkedList <DestinationInterface <E>> destinationsConnectees;
-   
-    /** 
-     * l'information reçue en entrée du transmetteur 
-     */
-    protected Information <R>  informationRecue;
-		
-    /** 
-     * l'information émise en sortie du transmetteur
-     */		
-    protected Information <E>  informationEmise;
-   
-    /** 
-     * un constructeur factorisant les initialisations communes aux
-     * réalisations de la classe abstraite Transmetteur
-     */
-    public Transmetteur() {
-	destinationsConnectees = new LinkedList <DestinationInterface <E>> ();
-	informationRecue = null;
-	informationEmise = null;
-    }
-   	
-    /**
-     * retourne la dernière information reçue en entrée du
-     * transmetteur
-     * @return une information   
-     */
-    public Information <R>  getInformationRecue() {
-	return this.informationRecue;
+public class TransmetteurParfait extends Transmetteur<Boolean, Boolean> {
+
+    @Override
+    public void recevoir(Information<Boolean> information) throws InformationNonConforme {
+        this.informationRecue = information;
+        emettre();
     }
 
-    /**
-     * retourne la dernière information émise en sortie du
-     * transmetteur
-     * @return une information   
-     */
-    public Information <E>  getInformationEmise() {
-	return this.informationEmise;
+    @Override
+    public void emettre() throws InformationNonConforme {
+        this.informationEmise = this.informationRecue;
+        // émission vers les composants connectés
+        for (DestinationInterface<Boolean> destinationConnectee : destinationsConnectees) {
+            destinationConnectee.recevoir(this.informationEmise);
+        }
     }
-
-    /**
-     * connecte une destination à la sortie du transmetteur
-     * @param destination  la destination à connecter
-     */
-    public void connecter (DestinationInterface <E> destination) {
-	destinationsConnectees.add(destination); 
-    }
-
-    /**
-     * déconnecte une destination de la la sortie du transmetteur
-     * @param destination  la destination à déconnecter
-     */
-    public void deconnecter (DestinationInterface <E> destination) {
-	destinationsConnectees.remove(destination); 
-    }
-   	    
-    /**
-     * reçoit une information.  Cette méthode, en fin d'exécution,
-     * appelle la méthode émettre.
-     * @param information  l'information  reçue
-     */
-    public  abstract void recevoir(Information <R> information) throws InformationNonConforme;
-   
-    /**
-     * émet l'information construite par le transmetteur
-     */
-    public  abstract void emettre() throws InformationNonConforme;   
 }
