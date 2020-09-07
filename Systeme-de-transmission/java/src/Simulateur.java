@@ -80,31 +80,30 @@ public class Simulateur {
      * @throws ArgumentsException si un des arguments est incorrect
      */
     public Simulateur(String[] args) throws ArgumentsException {
-
+        // Set the arguments given by the user
         analyseArguments(args);
 
-        // Convert messageString to Boolean[]
-        Boolean[] message = new Boolean[messageString.length()];
-        for (int i = 0; i < messageString.length(); i++) {
-            char letter = messageString.charAt(i);
-            if (letter == '1') message[i] = true;
-            else if (letter == '0') message[i] = false;
-        }
-
-        // Instantiations of source, transmetter, destination and sondes
-        Information<Boolean> information_transmettre = new Information<>(message);
-        source = new SourceFixe(information_transmettre);
+        // Instantiations of source, transmitter and destination
+        // If the message is random and the seed is given
+        if (messageAleatoire && aleatoireAvecGerme) source = new SourceAleatoire(nbBitsMess, seed);
+            // If the message is random
+        else if (messageAleatoire) source = new SourceAleatoire(nbBitsMess);
+            // If the message was given by the user
+        else source = new SourceFixe(messageString);
         transmetteurLogique = new TransmetteurParfait();
         destination = new DestinationFinale();
-        SondeLogique sonde_1 = new SondeLogique("Message emis", 100);
-        SondeLogique sonde_2 = new SondeLogique("Message reçu", 100);
 
-        // Connecitons
+        // Connections between components
         source.connecter(transmetteurLogique);
-        source.connecter(sonde_1);
         transmetteurLogique.connecter(destination);
-        transmetteurLogique.connecter(sonde_2);
 
+        // Display graphics
+        if (affichage) {
+            SondeLogique sonde1 = new SondeLogique("SEND MESSAGE", 100);
+            SondeLogique sonde2 = new SondeLogique("RECEIVED MESSAGE", 100);
+            source.connecter(sonde1);
+            transmetteurLogique.connecter(sonde2);
+        }
 
     }
 
@@ -182,23 +181,30 @@ public class Simulateur {
      */
     public float calculTauxErreurBinaire() {
 
-        String send_message = source.getInformationEmise().toString();
-        String received_message = destination.getInformationRecue().toString();
+        // Get the send message and the received message
+        Information<Boolean> sendMessage = source.getInformationEmise();
+        Information<Boolean> receivedMessage = destination.getInformationRecue();
 
-
-        if (send_message.length() != received_message.length())
+        // Throws an Exception if the messages don't have the same length
+        if ((source.getInformationEmise().nbElements() != nbBitsMess) || (destination.getInformationRecue().nbElements() != nbBitsMess))
             throw new IllegalArgumentException("The length of the send message isn't equal to the received one");
 
-        // Compare char per char
-        int bit_error = 0;
+        int bitError = 0;
+        int nbBits = source.getInformationEmise().nbElements();
+        String sendMessageString = "";
+        String receivedMessageString ="";
 
-        for (int i = 0; i < send_message.length(); i++) {
-            char send_char = send_message.charAt(i);
-            char received_char = received_message.charAt(i);
-            if (send_char != received_char) bit_error++;
+        // Compare char per char
+        for(int i = 0; i < nbBits; i++){
+            sendMessageString += sendMessage.iemeElement(i) ? 1 : 0;
+            receivedMessageString += receivedMessage.iemeElement(i) ? 1 : 0;
+            if (sendMessage.iemeElement(i) != receivedMessage.iemeElement(i)) bitError++;
         }
 
-        return (float) bit_error / (float) send_message.length();
+        System.out.println("Send message was : \n" + sendMessageString);
+        System.out.println("Received message was : \n" + receivedMessageString);
+
+        return (float) bitError / (float) nbBits;
     }
 
 
