@@ -10,7 +10,18 @@ import information.Information;
  */
 public class SourceFixe extends Source<Boolean> {
 
-    public SourceFixe(Information<Boolean> informationGeneree) {
-        this.informationGeneree = informationGeneree;
+    public SourceFixe(String messageString) {
+
+        // Convert messageString to Boolean[]
+        Boolean[] messageBooleans = new Boolean[messageString.length()];
+        for (int i = 0; i < messageString.length(); i++) {
+            char letter = messageString.charAt(i);
+            if (letter == '1') messageBooleans[i] = true;
+            else if (letter == '0') messageBooleans[i] = false;
+            else throw new IllegalArgumentException("Character doesn't have the values 0 or 1");
+        }
+
+        // Set the attribute informationGeneree
+        this.informationGeneree = new Information<>(messageBooleans);
     }
 }
