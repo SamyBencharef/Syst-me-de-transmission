@@ -27,7 +27,7 @@ public class TransmetteurParfait extends Transmetteur<Boolean, Boolean> {
     @Override
     public void emettre() throws InformationNonConforme {
         this.informationEmise = this.informationRecue;
-        // émission vers les composants connectés
+        // Send the message to the others destinations
         for (DestinationInterface<Boolean> destinationConnectee : destinationsConnectees) {
             destinationConnectee.recevoir(this.informationEmise);
         }
