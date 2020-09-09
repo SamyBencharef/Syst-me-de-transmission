@@ -52,6 +52,22 @@ public class Simulateur {
      * la chaîne de caractères correspondant à m dans l'argument -mess m
      */
     private String messageString = "100";
+    /**
+     * la chaîne de la forme d'onde pour une transmission analogique
+     */
+    private String waveForm = "RZ";
+    /**
+     *  la valeur du nombre d’échantillons par bit pour un echantillonnage si elle n'est pas imposee
+     */
+    private Integer ne = 30;
+    /**
+     *  la valeur min de l'amplitude du signal
+     */
+    private Float ampliMin = 0.00f;
+    /**
+     *  la valeur max de l'amplitude du signal
+     */
+    private Float ampliMax = 0.00f;
 
 
     /**
@@ -154,6 +170,31 @@ public class Simulateur {
                         throw new ArgumentsException("Valeur du parametre -mess invalide : " + nbBitsMess);
                 } else
                     throw new ArgumentsException("Valeur du parametre -mess invalide : " + args[i]);
+            } else if (args[i].matches("-form")) {
+                i++;
+                // Treatment
+                if (args[i].matches("NRZ")) {
+                    waveForm = "NRZ";
+                } else if (args[i].matches("NRZT")) {
+                    waveForm = "NRZT";
+                } else if (args[i].matches("RZ")) {
+                    waveForm = "RZ";
+                } else throw new ArgumentsException("Valeur du parametre -form invalide : " + args[i]);
+            } else if (args[i].matches("-nbEch")) {
+                i++;
+                // Treatment
+                if (args[i].matches("^[1-9]\\d*$")) {
+                    ne = Integer.valueOf(args[i]);
+                } else throw new ArgumentsException("Valeur du parametre -nbEch invalide : " + args[i]);
+            } else if (args[i].matches("-ampl")) {
+                i++;
+                // Treatment
+                if (args[i].matches("[+-]?([0-9]*[.])?[0-9]+") && args[i+1].matches("[+-]?([0-9]*[.])?[0-9]+")) {
+                    ampliMin = Float.valueOf(args[i]);
+                    i++;
+                    ampliMax = Float.valueOf(args[i]);
+                } else throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
+                if (ampliMin >= ampliMax) throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
             } else throw new ArgumentsException("Option invalide :" + args[i]);
         }
 
@@ -192,17 +233,12 @@ public class Simulateur {
         int bitError = 0;
         int nbBits = source.getInformationEmise().nbElements();
         String sendMessageString = "";
-        String receivedMessageString ="";
+        String receivedMessageString = "";
 
         // Compare char per char
-        for(int i = 0; i < nbBits; i++){
-            sendMessageString += sendMessage.iemeElement(i) ? 1 : 0;
-            receivedMessageString += receivedMessage.iemeElement(i) ? 1 : 0;
+        for (int i = 0; i < nbBits; i++) {
             if (sendMessage.iemeElement(i) != receivedMessage.iemeElement(i)) bitError++;
         }
-
-        System.out.println("Send message was : \n" + sendMessageString);
-        System.out.println("Received message was : \n" + receivedMessageString);
 
         return (float) bitError / (float) nbBits;
     }
