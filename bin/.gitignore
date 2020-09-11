@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # git does not allow empty directories.
 # Yet, we need to add this empty directory on git.
 # To achieve that, we created this .gitignore file, so that the directory will not be empty thus enabling us to commit it.
@@ -5,3 +6,11 @@
 *
 # And then add an exception for this specifc file (so that we can commit it).
 !.gitignore
+=======
+/destinations/
+/information/
+/sources/
+/transmetteurs/
+/visualisations/
+/emetteurs/
+>>>>>>> origin/milo
