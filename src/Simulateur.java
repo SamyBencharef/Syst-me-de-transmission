@@ -1,4 +1,5 @@
 import emetteurs.Emetteur;
+import information.Information;
 import recepteurs.Recepteur;
 import sources.*;
 import destinations.*;
@@ -244,26 +245,25 @@ public class Simulateur {
      */
     public float calculTauxErreurBinaire() {
 
-//        // Get the send message and the received message
-//        Information<Boolean> sendMessage = source.getInformationEmise();
-//        Information<Boolean> receivedMessage = destination.getInformationRecue();
-//
-//        // Throws an Exception if the messages don't have the same length
-//        if ((source.getInformationEmise().nbElements() != nbBitsMess) || (destination.getInformationRecue().nbElements() != nbBitsMess))
-//            throw new IllegalArgumentException("The length of the send message isn't equal to the received one");
-//
-//        int bitError = 0;
-//        int nbBits = source.getInformationEmise().nbElements();
-//        String sendMessageString = "";
-//        String receivedMessageString = "";
-//
-//        // Compare char per char
-//        for (int i = 0; i < nbBits; i++) {
-//            if (sendMessage.iemeElement(i) != receivedMessage.iemeElement(i)) bitError++;
-//        }
-//
-//        return (float) bitError / (float) nbBits;
-        return 0.00f;
+        // Get the send message and the received message
+        Information<Boolean> sendMessage = source.getInformationEmise();
+        Information<Boolean> receivedMessage = destination.getInformationRecue();
+
+        // Throws an Exception if the messages don't have the same length
+        if ((source.getInformationEmise().nbElements() != nbBitsMess) || (destination.getInformationRecue().nbElements() != nbBitsMess))
+            throw new IllegalArgumentException("The length of the send message isn't equal to the received one");
+
+        int bitError = 0;
+        int nbBits = source.getInformationEmise().nbElements();
+        String sendMessageString = "";
+        String receivedMessageString = "";
+
+        // Compare char per char
+        for (int i = 0; i < nbBits; i++) {
+            if (sendMessage.iemeElement(i) != receivedMessage.iemeElement(i)) bitError++;
+        }
+
+        return (float) bitError / (float) nbBits;
     }
 
 
