@@ -3,10 +3,11 @@ package sources;
 import information.Information;
 
 /**
- * Classe Abstraite d'un composant source d'informations dont les
- * éléments sont de type T
+ * Class that defines the component source and that emits specified information defined by the user.
+ * The outype type is a Boolean.
+ * The class implements the class Source.
  *
- * @author prou
+ * @author Thierry JIAO - Samy BENCHAREF - Thanh le HUY - Milo THIBAUD - Lucas BERENGUER
  */
 public class SourceFixe extends Source<Boolean> {
 

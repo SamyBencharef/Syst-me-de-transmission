@@ -1,30 +1,18 @@
+import emetteurs.Emetteur;
+import recepteurs.Recepteur;
 import sources.*;
 import destinations.*;
 import transmetteurs.*;
-
-import information.*;
-
 import visualisations.*;
-
-import java.util.regex.*;
-import java.util.*;
-import java.lang.Math;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 
 /**
- * La classe Simulateur permet de construire et simuler une chaîne de
- * transmission composée d'une Source, d'un nombre variable de
- * Transmetteur(s) et d'une Destination.
+ * La classe Simulateur permet de construire et simuler une chaîne de transmission composée d'une Source, d'un nombre
+ * variable de Transmetteur(s) et d'une Destination.
  *
  * @author cousin
  * @author prou
+ * @author Thierry JIAO - Samy BENCHAREF - Thanh le HUY - Milo THIBAUD - Lucas BERENGUER
  */
 public class Simulateur {
 
@@ -57,17 +45,17 @@ public class Simulateur {
      */
     private String waveForm = "RZ";
     /**
-     *  la valeur du nombre d’échantillons par bit pour un echantillonnage si elle n'est pas imposee
+     * la valeur du nombre d’échantillons par bit pour un echantillonnage si elle n'est pas imposee
      */
     private Integer ne = 30;
     /**
-     *  la valeur min de l'amplitude du signal
+     * la valeur min de l'amplitude du signal
      */
     private Float ampliMin = 0.00f;
     /**
-     *  la valeur max de l'amplitude du signal
+     * la valeur max de l'amplitude du signal
      */
-    private Float ampliMax = 0.00f;
+    private Float ampliMax = 1.00f;
 
 
     /**
@@ -85,17 +73,18 @@ public class Simulateur {
 
 
     /**
-     * Le constructeur de Simulateur construit une chaîne de
-     * transmission composée d'une Source <Boolean>, d'une Destination
+     * Le constructeur de Simulateur construit une chaîne de transmission composée d'une Source <Boolean>, d'une
+     * Destination
      * <Boolean> et de Transmetteur(s) [voir la méthode
-     * analyseArguments]...  <br> Les différents composants de la
-     * chaîne de transmission (Source, Transmetteur(s), Destination,
-     * Sonde(s) de visualisation) sont créés et connectés.
+     * analyseArguments]...  <br> Les différents composants de la chaîne de transmission (Source, Transmetteur(s),
+     * Destination, Sonde(s) de visualisation) sont créés et connectés.
+     * Dans notre simulateur, tous les composants connaissent l'horloge.
      *
      * @param args le tableau des différents arguments.
      * @throws ArgumentsException si un des arguments est incorrect
      */
     public Simulateur(String[] args) throws ArgumentsException {
+        /* TP1 Instructions
         // Set the arguments given by the user
         analyseArguments(args);
 
@@ -106,7 +95,7 @@ public class Simulateur {
         else if (messageAleatoire) source = new SourceAleatoire(nbBitsMess);
             // If the message was given by the user
         else source = new SourceFixe(messageString);
-        transmetteurLogique = new TransmetteurParfait();
+        transmetteurLogique = new TransmetteurParfaitLogique();
         destination = new DestinationFinale();
 
         // Connections between components
@@ -120,14 +109,48 @@ public class Simulateur {
             source.connecter(sonde1);
             transmetteurLogique.connecter(sonde2);
         }
+        */
+
+        /* TP2 Instructions */
+        // Set the arguments given by the user
+        analyseArguments(args);
+
+        // Instantiations of source, transmitter, recepteur, emetteur and destination
+        // If the message is random and the seed is given
+        if (messageAleatoire && aleatoireAvecGerme) source = new SourceAleatoire(nbBitsMess, seed);
+            // If the message is random
+        else if (messageAleatoire) source = new SourceAleatoire(nbBitsMess);
+            // If the message was given by the user
+        else source = new SourceFixe(messageString);
+        Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
+        TransmetteurParfaitAnalogique transmetteurAnalogique = new TransmetteurParfaitAnalogique();
+        destination = new DestinationFinale();
+
+        // Connections between components
+        source.connecter(emetteur);
+        emetteur.connecter(transmetteurAnalogique);
+        transmetteurAnalogique.connecter(recepteur);
+        recepteur.connecter(destination);
+
+        // Display graphics
+        if (affichage) {
+            SondeLogique sonde1 = new SondeLogique("SEND MESSAGE LOGICAL", 100);
+            SondeAnalogique sonde2 = new SondeAnalogique("SEND MESSAGE ANALOGICAL");
+            SondeAnalogique sonde3 = new SondeAnalogique("RECEIVED MESSAGE ANALOGICAL");
+            SondeLogique sonde4 = new SondeLogique("RECEVEID MESSAGE LOGICAL", 100);
+            source.connecter(sonde1);
+            emetteur.connecter(sonde2);
+            transmetteurAnalogique.connecter(sonde3);
+            recepteur.connecter(sonde4);
+        }
 
     }
 
 
     /**
-     * La méthode analyseArguments extrait d'un tableau de chaînes de
-     * caractères les différentes options de la simulation.  Elle met
-     * à jour les attributs du Simulateur.
+     * La méthode analyseArguments extrait d'un tableau de chaînes de caractères les différentes options de la
+     * simulation.  Elle met à jour les attributs du Simulateur.
      *
      * @param args le tableau des différents arguments.
      *             <br>
@@ -189,12 +212,13 @@ public class Simulateur {
             } else if (args[i].matches("-ampl")) {
                 i++;
                 // Treatment
-                if (args[i].matches("[+-]?([0-9]*[.])?[0-9]+") && args[i+1].matches("[+-]?([0-9]*[.])?[0-9]+")) {
+                if (args[i].matches("[+-]?([0-9]*[.])?[0-9]+") && args[i + 1].matches("[+-]?([0-9]*[.])?[0-9]+")) {
                     ampliMin = Float.valueOf(args[i]);
                     i++;
                     ampliMax = Float.valueOf(args[i]);
                 } else throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
-                if (ampliMin >= ampliMax) throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
+                if (ampliMin >= ampliMax)
+                    throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
             } else throw new ArgumentsException("Option invalide :" + args[i]);
         }
 
@@ -202,8 +226,7 @@ public class Simulateur {
 
 
     /**
-     * La méthode execute effectue un envoi de message par la source
-     * de la chaîne de transmission du Simulateur.
+     * La méthode execute effectue un envoi de message par la source de la chaîne de transmission du Simulateur.
      *
      * @throws Exception si un problème survient lors de l'exécution
      */
@@ -215,38 +238,37 @@ public class Simulateur {
 
 
     /**
-     * La méthode qui calcule le taux d'erreur binaire en comparant
-     * les bits du message émis avec ceux du message reçu.
+     * La méthode qui calcule le taux d'erreur binaire en comparant les bits du message émis avec ceux du message reçu.
      *
      * @return La valeur du Taux dErreur Binaire.
      */
     public float calculTauxErreurBinaire() {
 
-        // Get the send message and the received message
-        Information<Boolean> sendMessage = source.getInformationEmise();
-        Information<Boolean> receivedMessage = destination.getInformationRecue();
-
-        // Throws an Exception if the messages don't have the same length
-        if ((source.getInformationEmise().nbElements() != nbBitsMess) || (destination.getInformationRecue().nbElements() != nbBitsMess))
-            throw new IllegalArgumentException("The length of the send message isn't equal to the received one");
-
-        int bitError = 0;
-        int nbBits = source.getInformationEmise().nbElements();
-        String sendMessageString = "";
-        String receivedMessageString = "";
-
-        // Compare char per char
-        for (int i = 0; i < nbBits; i++) {
-            if (sendMessage.iemeElement(i) != receivedMessage.iemeElement(i)) bitError++;
-        }
-
-        return (float) bitError / (float) nbBits;
+//        // Get the send message and the received message
+//        Information<Boolean> sendMessage = source.getInformationEmise();
+//        Information<Boolean> receivedMessage = destination.getInformationRecue();
+//
+//        // Throws an Exception if the messages don't have the same length
+//        if ((source.getInformationEmise().nbElements() != nbBitsMess) || (destination.getInformationRecue().nbElements() != nbBitsMess))
+//            throw new IllegalArgumentException("The length of the send message isn't equal to the received one");
+//
+//        int bitError = 0;
+//        int nbBits = source.getInformationEmise().nbElements();
+//        String sendMessageString = "";
+//        String receivedMessageString = "";
+//
+//        // Compare char per char
+//        for (int i = 0; i < nbBits; i++) {
+//            if (sendMessage.iemeElement(i) != receivedMessage.iemeElement(i)) bitError++;
+//        }
+//
+//        return (float) bitError / (float) nbBits;
+        return 0.00f;
     }
 
 
     /**
-     * La fonction main instancie un Simulateur à l'aide des
-     * arguments paramètres et affiche le résultat de l'exécution
+     * La fonction main instancie un Simulateur à l'aide des arguments paramètres et affiche le résultat de l'exécution
      * d'une transmission.
      *
      * @param args les différents arguments qui serviront à l'instanciation du Simulateur.

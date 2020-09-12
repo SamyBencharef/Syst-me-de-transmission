@@ -5,10 +5,11 @@ import information.Information;
 import java.util.Random;
 
 /**
- * Classe Abstraite d'un composant source d'informations dont les
- * éléments sont de type T
+ * Class that defines the component source and that emits random information defined by the user.
+ * The outype type is a Boolean.
+ * The class implements the class Source.
  *
- * @author prou
+ * @author Thierry JIAO - Samy BENCHAREF - Thanh le HUY - Milo THIBAUD - Lucas BERENGUER
  */
 public class SourceAleatoire extends Source<Boolean> {
     public SourceAleatoire(int nbBits) {
