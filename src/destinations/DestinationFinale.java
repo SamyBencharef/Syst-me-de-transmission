@@ -4,10 +4,9 @@ import information.Information;
 import information.InformationNonConforme;
 
 /**
- * Classe Abstraite d'un composant destination d'informations dont les
- * éléments sont de type T
+ * Class that defines the component Destination wich elements are Boolean.
  *
- * @author prou
+ * @author Thierry JIAO - Samy BENCHAREF - Thanh Huy LE - Milo THIBAUD - Lucas BERENGUER
  */
 public class DestinationFinale extends Destination<Boolean> {
 

@@ -3,24 +3,21 @@ package transmetteurs;
 import destinations.DestinationInterface;
 import information.Information;
 import information.InformationNonConforme;
-import sources.SourceInterface;
-
-import java.util.LinkedList;
 
 /**
- * Classe Abstraite d'un composant transmetteur d'informations dont
- * les éléments sont de type R en entrée et de type E en sortie;
- * l'entrée du transmetteur implémente l'interface
- * DestinationInterface, la sortie du transmetteur implémente
- * l'interface SourceInterface
+ * Class that defines a perfect logical transmitter (receive and send the same message wihout adding noise).
+ * The input type is a Boolean and the output type is a Boolean.
+ * The class implements the class Transmetteur.
  *
- * @author prou
+ * @author Thierry JIAO - Samy BENCHAREF - Thanh Huy LE - Milo THIBAUD - Lucas BERENGUER
  */
-public class TransmetteurParfait extends Transmetteur<Boolean, Boolean> {
+public class TransmetteurParfaitLogique extends Transmetteur<Boolean, Boolean> {
 
     @Override
     public void recevoir(Information<Boolean> information) throws InformationNonConforme {
+        // Set the information
         this.informationRecue = information;
+        // Send the information to all connected components
         emettre();
     }
 
