@@ -1,3 +1,3 @@
 #!/bin/bash
-rm -rf bin/* (!.gitignore)
-rm -rf docs/* (!.gitignore)
+rm -rf bin/*
+rm -rf docs/*
