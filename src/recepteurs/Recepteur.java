@@ -9,7 +9,7 @@ import transmetteurs.Transmetteur;
  * Class that defines the component receiver. The input type is a Float and the output type is a Boolean. The class
  * implements the class Transmetteur.
  *
- * @author Thierry JIAO - Samy BENCHAREF - Thanh le HUY - Milo THIBAUD - Lucas BERENGUER
+ * @author Thierry JIAO - Samy BENCHAREF - Thanh Huy LE - Milo THIBAUD - Lucas BERENGUER
  */
 public class Recepteur extends Transmetteur<Float, Boolean> {
 

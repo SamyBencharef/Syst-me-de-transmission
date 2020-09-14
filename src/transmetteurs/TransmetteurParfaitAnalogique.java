@@ -8,7 +8,7 @@ import information.InformationNonConforme;
  * Class that defines a perfect analogical transmitter (receive and send the same message wihout adding noise). The
  * input type is a Float and the output type is a Float. The class implements the class Transmetteur.
  *
- * @author Thierry JIAO - Samy BENCHAREF - Thanh le HUY - Milo THIBAUD - Lucas BERENGUER
+ * @author Thierry JIAO - Samy BENCHAREF - Thanh Huy LE - Milo THIBAUD - Lucas BERENGUER
  */
 public class TransmetteurParfaitAnalogique extends Transmetteur<Float, Float> {
 

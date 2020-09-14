@@ -78,8 +78,8 @@ public class Simulateur {
      * Destination
      * <Boolean> et de Transmetteur(s) [voir la méthode
      * analyseArguments]...  <br> Les différents composants de la chaîne de transmission (Source, Transmetteur(s),
-     * Destination, Sonde(s) de visualisation) sont créés et connectés.
-     * Dans notre simulateur, tous les composants connaissent l'horloge.
+     * Destination, Sonde(s) de visualisation) sont créés et connectés. Dans notre simulateur, tous les composants
+     * connaissent l'horloge.
      *
      * @param args le tableau des différents arguments.
      * @throws ArgumentsException si un des arguments est incorrect
@@ -118,11 +118,17 @@ public class Simulateur {
 
         // Instantiations of source, transmitter, recepteur, emetteur and destination
         // If the message is random and the seed is given
-        if (messageAleatoire && aleatoireAvecGerme) source = new SourceAleatoire(nbBitsMess, seed);
-            // If the message is random
-        else if (messageAleatoire) source = new SourceAleatoire(nbBitsMess);
-            // If the message was given by the user
-        else source = new SourceFixe(messageString);
+        if (messageAleatoire && aleatoireAvecGerme) {
+            source = new SourceAleatoire(nbBitsMess, seed);
+        }
+        // If the message is random
+        else if (messageAleatoire) {
+            source = new SourceAleatoire(nbBitsMess);
+        }
+        // If the message was given by the user
+        else {
+            source = new SourceFixe(messageString);
+        }
         Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
         Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
         TransmetteurParfaitAnalogique transmetteurAnalogique = new TransmetteurParfaitAnalogique();
@@ -190,10 +196,12 @@ public class Simulateur {
                 } else if (args[i].matches("[0-9]{1,6}")) {
                     messageAleatoire = true;
                     nbBitsMess = Integer.valueOf(args[i]);
-                    if (nbBitsMess < 1)
+                    if (nbBitsMess < 1) {
                         throw new ArgumentsException("Valeur du parametre -mess invalide : " + nbBitsMess);
-                } else
+                    }
+                } else {
                     throw new ArgumentsException("Valeur du parametre -mess invalide : " + args[i]);
+                }
             } else if (args[i].matches("-form")) {
                 i++;
                 // Treatment
@@ -203,13 +211,17 @@ public class Simulateur {
                     waveForm = "NRZT";
                 } else if (args[i].matches("RZ")) {
                     waveForm = "RZ";
-                } else throw new ArgumentsException("Valeur du parametre -form invalide : " + args[i]);
+                } else {
+                    throw new ArgumentsException("Valeur du parametre -form invalide : " + args[i]);
+                }
             } else if (args[i].matches("-nbEch")) {
                 i++;
                 // Treatment
                 if (args[i].matches("^[1-9]\\d*$")) {
                     ne = Integer.valueOf(args[i]);
-                } else throw new ArgumentsException("Valeur du parametre -nbEch invalide : " + args[i]);
+                } else {
+                    throw new ArgumentsException("Valeur du parametre -nbEch invalide : " + args[i]);
+                }
             } else if (args[i].matches("-ampl")) {
                 i++;
                 // Treatment
@@ -217,10 +229,20 @@ public class Simulateur {
                     ampliMin = Float.valueOf(args[i]);
                     i++;
                     ampliMax = Float.valueOf(args[i]);
-                } else throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
-                if (ampliMin >= ampliMax)
+                } else {
                     throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
-            } else throw new ArgumentsException("Option invalide :" + args[i]);
+                }
+                if (ampliMin >= ampliMax || ampliMin >= 0 || ampliMax <= 0) {
+                    throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
+                }
+            } else {
+                throw new ArgumentsException("Option invalide :" + args[i]);
+            }
+        }
+
+        // Check if the args(-ampl)
+        if (ampliMin != 0 && waveForm.equals("RZ")) {
+            throw new ArgumentsException("Valeur du parametre -ampl invalide : " + ampliMin);
         }
 
     }
@@ -250,8 +272,9 @@ public class Simulateur {
         Information<Boolean> receivedMessage = destination.getInformationRecue();
 
         // Throws an Exception if the messages don't have the same length
-        if ((source.getInformationEmise().nbElements() != nbBitsMess) || (destination.getInformationRecue().nbElements() != nbBitsMess))
+        if ((source.getInformationEmise().nbElements() != nbBitsMess) || (destination.getInformationRecue().nbElements() != nbBitsMess)) {
             throw new IllegalArgumentException("The length of the send message isn't equal to the received one");
+        }
 
         int bitError = 0;
         int nbBits = source.getInformationEmise().nbElements();

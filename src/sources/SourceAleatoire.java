@@ -9,7 +9,7 @@ import java.util.Random;
  * The outype type is a Boolean.
  * The class implements the class Source.
  *
- * @author Thierry JIAO - Samy BENCHAREF - Thanh le HUY - Milo THIBAUD - Lucas BERENGUER
+ * @author Thierry JIAO - Samy BENCHAREF - Thanh Huy LE - Milo THIBAUD - Lucas BERENGUER
  */
 public class SourceAleatoire extends Source<Boolean> {
     public SourceAleatoire(int nbBits) {

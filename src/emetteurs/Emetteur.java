@@ -9,7 +9,7 @@ import transmetteurs.Transmetteur;
  * Class that defines the component emitter. The input type is a Boolean and the output type is a Float. The class
  * implements the class Transmetteur.
  *
- * @author Thierry JIAO - Samy BENCHAREF - Thanh le HUY - Milo THIBAUD - Lucas BERENGUER
+ * @author Thierry JIAO - Samy BENCHAREF - Thanh Huy LE - Milo THIBAUD - Lucas BERENGUER
  */
 public class Emetteur extends Transmetteur<Boolean, Float> {
 
@@ -233,13 +233,7 @@ public class Emetteur extends Transmetteur<Boolean, Float> {
                     newInformation.add(0.00f);
                 }
             } else {
-                for (int n = 0; n < nbEchTpsBit / 3; n++) {
-                    newInformation.add(0.00f);
-                }
-                for (int n = nbEchTpsBit / 3; n < 2 * nbEchTpsBit / 3; n++) {
-                    newInformation.add(ampliMin);
-                }
-                for (int n = 2 * nbEchTpsBit / 3; n < nbEchTpsBit; n++) {
+                for (int n = 0; n < nbEchTpsBit; n++) {
                     newInformation.add(0.00f);
                 }
             }

@@ -9,7 +9,7 @@ import information.InformationNonConforme;
  * The input type is a Boolean and the output type is a Boolean.
  * The class implements the class Transmetteur.
  *
- * @author Thierry JIAO - Samy BENCHAREF - Thanh le HUY - Milo THIBAUD - Lucas BERENGUER
+ * @author Thierry JIAO - Samy BENCHAREF - Thanh Huy LE - Milo THIBAUD - Lucas BERENGUER
  */
 public class TransmetteurParfaitLogique extends Transmetteur<Boolean, Boolean> {
 
