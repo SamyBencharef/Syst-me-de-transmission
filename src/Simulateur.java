@@ -232,7 +232,7 @@ public class Simulateur {
                 } else {
                     throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
                 }
-                if (ampliMin >= ampliMax || ampliMin >= 0 || ampliMax <= 0) {
+                if (ampliMin >= ampliMax || ampliMin > 0 || ampliMax < 0) {
                     throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
                 }
             } else {
