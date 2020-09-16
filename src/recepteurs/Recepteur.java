@@ -44,15 +44,9 @@ public class Recepteur extends Transmetteur<Float, Boolean> {
     public void recevoir(Information<Float> information) throws InformationNonConforme {
         this.informationRecue = information;
         switch (codeType) {
-            case "NRZ":
-                this.informationEmise = nrzToLogic(this.informationRecue);
-                break;
-            case "NRZT":
-                this.informationEmise = nrztToLogic(this.informationRecue);
-                break;
-            case "RZ":
-                this.informationEmise = rzToLogic(this.informationRecue);
-                break;
+            case "NRZ" -> this.informationEmise = nrzToLogic(this.informationRecue);
+            case "NRZT" -> this.informationEmise = nrztToLogic(this.informationRecue);
+            case "RZ" -> this.informationEmise = rzToLogic(this.informationRecue);
         }
         emettre();
     }

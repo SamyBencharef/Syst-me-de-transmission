@@ -152,6 +152,7 @@ public class Simulateur {
             recepteur.connecter(sonde4);
         }
 
+
     }
 
 
@@ -232,7 +233,7 @@ public class Simulateur {
                 } else {
                     throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
                 }
-                if (ampliMin >= ampliMax || ampliMin >= 0 || ampliMax <= 0) {
+                if (ampliMin >= ampliMax || ampliMin > 0 || ampliMax < 0) {
                     throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
                 }
             } else {
@@ -278,8 +279,6 @@ public class Simulateur {
 
         int bitError = 0;
         int nbBits = source.getInformationEmise().nbElements();
-        String sendMessageString = "";
-        String receivedMessageString = "";
 
         // Compare char per char
         for (int i = 0; i < nbBits; i++) {
