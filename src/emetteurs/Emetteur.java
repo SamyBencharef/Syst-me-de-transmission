@@ -44,17 +44,10 @@ public class Emetteur extends Transmetteur<Boolean, Float> {
     public void recevoir(Information<Boolean> information) throws InformationNonConforme {
         this.informationRecue = information;
         switch (codeType) {
-            case "NRZ":
-                this.informationEmise = logicToNrz(this.informationRecue);
-                break;
-            case "NRZT":
-                this.informationEmise = logicToNrzt(this.informationRecue);
-                break;
-            case "RZ":
-                this.informationEmise = logicToRz(this.informationRecue);
-                break;
-            default:
-                throw new InformationNonConforme("Wrong Code Type given : " + codeType);
+            case "NRZ" -> this.informationEmise = logicToNrz(this.informationRecue);
+            case "NRZT" -> this.informationEmise = logicToNrzt(this.informationRecue);
+            case "RZ" -> this.informationEmise = logicToRz(this.informationRecue);
+            default -> throw new InformationNonConforme("Wrong Code Type given : " + codeType);
         }
         emettre();
     }
@@ -80,9 +73,9 @@ public class Emetteur extends Transmetteur<Boolean, Float> {
         // Construct the new Information<Float>
         Information<Float> newInformation = new Information<>();
         // Iterate through the variable Information<Boolean>
-        for (int i = 0; i < information.nbElements(); i++) {
+        for (Boolean bit : information) {
             // If the element has the boolean value 'true', add nbEchTpsBit times a element (at value ampliMax) to the new information
-            if (information.iemeElement(i)) {
+            if (bit) {
                 for (int n = 0; n < nbEchTpsBit; n++) {
                     newInformation.add(ampliMax);
                 }

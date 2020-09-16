@@ -152,6 +152,7 @@ public class Simulateur {
             recepteur.connecter(sonde4);
         }
 
+
     }
 
 
@@ -278,8 +279,6 @@ public class Simulateur {
 
         int bitError = 0;
         int nbBits = source.getInformationEmise().nbElements();
-        String sendMessageString = "";
-        String receivedMessageString = "";
 
         // Compare char per char
         for (int i = 0; i < nbBits; i++) {
