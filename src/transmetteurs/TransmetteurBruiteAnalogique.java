@@ -33,7 +33,7 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
     @Override
     public void emettre() throws InformationNonConforme {
         // Add the noise to the information
-        this.informationEmise = AddNoise(this.informationRecue);
+        this.informationEmise = addNoise(this.informationRecue);
         // Send the message to the others destinations
         for (DestinationInterface<Float> destinationConnectee : destinationsConnectees) {
             destinationConnectee.recevoir(this.informationEmise);
@@ -46,15 +46,16 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
      * @param information (Information<Float>) Initial information
      * @return noisy information
      */
-    private Information<Float> AddNoise(Information<Float> information) {
+    private Information<Float> addNoise(Information<Float> information) {
         Information<Float> noisyInformation = new Information<>();
         Random ran = new Random();
-        float standardDeviation = (float) Math.sqrt((GetSignalPower(information) * nbEchTpsBit) / (2 * Math.pow(10,
+        float standardDeviation = (float) Math.sqrt((getSignalPower(information) * nbEchTpsBit) / (2 * Math.pow(10,
                 snrpb / 10)));
         // Mix the noise and information
         for (int i = 0; i < information.nbElements(); i++) {
-            float Noise = (float) (standardDeviation * Math.sqrt(-2 * Math.log(1 - ran.nextFloat())) * Math.cos(2 * Math.PI * ran.nextFloat()));
-            noisyInformation.add(Noise + information.iemeElement(i));
+            float noise =
+                    (float) (standardDeviation * Math.sqrt(-2 * Math.log(1 - ran.nextFloat())) * Math.cos(2 * Math.PI * ran.nextFloat()));
+            noisyInformation.add(noise + information.iemeElement(i));
         }
 
         return noisyInformation;
@@ -66,7 +67,7 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
      * @param information (Information<Float>) Information
      * @return the power of the signal
      */
-    private float GetSignalPower(Information<Float> information) {
+    private float getSignalPower(Information<Float> information) {
         float signalPower = 0.00f;
         if (information.nbElements() != 0) {
             for (int i = 0; i < information.nbElements(); i++) {

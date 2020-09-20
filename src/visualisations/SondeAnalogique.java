@@ -3,8 +3,7 @@ package visualisations;
 import information.Information;
 
 /**
- * Classe réalisant l'affichage d'information composée d'éléments
- * réels (float)
+ * Classe réalisant l'affichage d'information composée d'éléments réels (float)
  *
  * @author prou
  */

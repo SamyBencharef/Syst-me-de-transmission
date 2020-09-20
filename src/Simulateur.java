@@ -361,9 +361,7 @@ public class Simulateur {
         }
 
         try {
-//            System.out.println(System.currentTimeMillis());
             simulateur.execute();
-//            System.out.println(System.currentTimeMillis());
             float tauxErreurBinaire = simulateur.calculTauxErreurBinaire();
             String s = "java  Simulateur  ";
             for (String arg : args) {
