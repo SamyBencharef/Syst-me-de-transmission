@@ -13,10 +13,10 @@ import transmetteurs.Transmetteur;
  */
 public class Recepteur extends Transmetteur<Float, Boolean> {
 
-    private String codeType;
-    private Float ampliMax;
-    private Float ampliMin;
-    private Integer nbEchTpsBit;
+    private final String codeType;
+    private final Float ampliMax;
+    private final Float ampliMin;
+    private final Integer nbEchTpsBit;
 
     /**
      * The constructor sets the attributes in order to convert the information.
@@ -79,7 +79,13 @@ public class Recepteur extends Transmetteur<Float, Boolean> {
         Information<Boolean> newInformation = new Information<>();
         // Iterate through the variable Information<Float>
         for (int i = 0; i < information.nbElements(); i = i + nbEchTpsBit) {
-            if (information.iemeElement(i).equals(ampliMax)) {
+            float mean = 0.00f;
+            for (int n = 0; n < nbEchTpsBit; n++) {
+                mean += information.iemeElement(i);
+            }
+            mean = mean / nbEchTpsBit;
+            // Quantify
+            if (compareValues(ampliMin, ampliMax, mean) == ampliMax) {
                 newInformation.add(true);
             } else {
                 newInformation.add(false);
@@ -95,10 +101,17 @@ public class Recepteur extends Transmetteur<Float, Boolean> {
      * @return Information<Boolean>
      */
     private Information<Boolean> nrztToLogic(Information<Float> information) {
+        // Construct the new Information<Boolean>
         Information<Boolean> newInformation = new Information<>();
-
+        // Iterate through the variable Information<Float>
         for (int i = 0; i < information.nbElements(); i = i + nbEchTpsBit) {
-            if (information.iemeElement(i + nbEchTpsBit / 3).equals(ampliMax)) {
+            float mean = 0.00f;
+            for (int n = nbEchTpsBit / 3; n < 2 * nbEchTpsBit / 3; n++) {
+                mean += information.iemeElement(i + n);
+            }
+            mean = mean / (nbEchTpsBit / 3.00f);
+            // Quantify
+            if (compareValues(ampliMin, ampliMax, mean) == ampliMax) {
                 newInformation.add(true);
             } else {
                 newInformation.add(false);
@@ -115,10 +128,18 @@ public class Recepteur extends Transmetteur<Float, Boolean> {
      * @return Information<Boolean>
      */
     private Information<Boolean> rzToLogic(Information<Float> information) {
+        // Construct the new Information<Boolean>
         Information<Boolean> newInformation = new Information<>();
-
+        float mean;
+        // Iterate through the variable Information<Float>
         for (int i = 0; i < information.nbElements(); i = i + nbEchTpsBit) {
-            if (information.iemeElement(i + nbEchTpsBit / 3).equals(ampliMax)) {
+            mean = 0.00f;
+            for (int n = nbEchTpsBit / 3; n < 2 * nbEchTpsBit / 3; n++) {
+                mean += information.iemeElement(i + n);
+            }
+            mean = mean / (nbEchTpsBit / 3.00f);
+            // Quantify
+            if (compareValues(ampliMin, ampliMax, mean) == ampliMax) {
                 newInformation.add(true);
             } else {
                 newInformation.add(false);
@@ -126,6 +147,22 @@ public class Recepteur extends Transmetteur<Float, Boolean> {
         }
         return newInformation;
 
+    }
+
+    /**
+     * Compare a float to 2 others float and returns the closest float
+     *
+     * @param valueA         (float) One of the two value
+     * @param valueB         (float) One of the two value
+     * @param valueToCompare (float) Value to be compare
+     * @return The closest value
+     */
+    private float compareValues(float valueA, float valueB, float valueToCompare) {
+        if (Math.abs(valueToCompare - valueA) < Math.abs(valueToCompare - valueB)) {
+            return valueA;
+        } else {
+            return valueB;
+        }
     }
 
 }

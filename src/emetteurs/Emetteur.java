@@ -13,10 +13,10 @@ import transmetteurs.Transmetteur;
  */
 public class Emetteur extends Transmetteur<Boolean, Float> {
 
-    private String codeType;
-    private Float ampliMax;
-    private Float ampliMin;
-    private Integer nbEchTpsBit;
+    private final String codeType;
+    private final Float ampliMax;
+    private final Float ampliMin;
+    private final Integer nbEchTpsBit;
 
     /**
      * The constructor sets the attributes in order to convert the information.
@@ -80,17 +80,13 @@ public class Emetteur extends Transmetteur<Boolean, Float> {
         // Construct the new Information<Float>
         Information<Float> newInformation = new Information<>();
         // Iterate through the variable Information<Boolean>
-        for (Boolean bit : information) {
+        for (int i = 0; i < information.nbElements(); i++) {
             // If the element has the boolean value 'true', add nbEchTpsBit times a element (at value ampliMax) to the new information
-            if (bit) {
-                for (int n = 0; n < nbEchTpsBit; n++) {
-                    newInformation.add(ampliMax);
-                }
+            if (information.iemeElement(i)) {
+                newInformation.addManyTimes(ampliMax, nbEchTpsBit);
             } // Otherwise, add nbEchTpsBit times a element (at value ampliMin) to the new information
             else {
-                for (int n = 0; n < nbEchTpsBit; n++) {
-                    newInformation.add(ampliMin);
-                }
+                newInformation.addManyTimes(ampliMin, nbEchTpsBit);
             }
         }
         return newInformation;
@@ -110,26 +106,19 @@ public class Emetteur extends Transmetteur<Boolean, Float> {
         for (int i = 0; i < information.nbElements(); i++) {
             if (i == 0) { // If i is at the beginning of information
                 if (information.iemeElement(i)) { // If the value is equal to true
-                    for (int n = 0; n < nbEchTpsBit / 3; n++) {
-                        newInformation.add((n * ampliMax) / (nbEchTpsBit / 3));
-                    }
-                    for (int n = nbEchTpsBit / 3; n < 2 * nbEchTpsBit / 3; n++) {
-                        newInformation.add(ampliMax);
-                    }
-                    for (int n = 2 * nbEchTpsBit / 3; n < nbEchTpsBit; n++) {
-                        if (information.iemeElement(i + 1)) {
-                            newInformation.add(ampliMax);
-                        } else {
+                    for (int n = 0; n < nbEchTpsBit / 3; n++) newInformation.add((n * ampliMax) / (nbEchTpsBit / 3));
+                    newInformation.addManyTimes(ampliMax, nbEchTpsBit / 3);
+                    if (information.iemeElement(i + 1)) {
+                        newInformation.addManyTimes(ampliMax, nbEchTpsBit / 3);
+                    } else {
+                        for (int n = 2 * nbEchTpsBit / 3; n < nbEchTpsBit; n++)
                             newInformation.add(ampliMax * (3 * (nbEchTpsBit - n)) / nbEchTpsBit);
-                        }
                     }
                 } else { // If the value is equal to false
                     for (int n = 0; n < nbEchTpsBit / 3; n++) {
                         newInformation.add((n * ampliMin) / (nbEchTpsBit / 3));
                     }
-                    for (int n = nbEchTpsBit / 3; n < 2 * nbEchTpsBit / 3; n++) {
-                        newInformation.add(ampliMin);
-                    }
+                    newInformation.addManyTimes(ampliMin, nbEchTpsBit / 3);
                     for (int n = 2 * nbEchTpsBit / 3; n < nbEchTpsBit; n++) {
                         if (information.iemeElement(i + 1)) {
                             newInformation.add(ampliMin * (3 * (nbEchTpsBit - n)) / nbEchTpsBit);
@@ -223,19 +212,11 @@ public class Emetteur extends Transmetteur<Boolean, Float> {
         // Iterate through the variable Information<Boolean>
         for (int i = 0; i < information.nbElements(); i++) {
             if (information.iemeElement(i)) {
-                for (int n = 0; n < nbEchTpsBit / 3; n++) {
-                    newInformation.add(0.00f);
-                }
-                for (int n = nbEchTpsBit / 3; n < 2 * nbEchTpsBit / 3; n++) {
-                    newInformation.add(ampliMax);
-                }
-                for (int n = 2 * nbEchTpsBit / 3; n < nbEchTpsBit; n++) {
-                    newInformation.add(0.00f);
-                }
+                newInformation.addManyTimes(0.00f, nbEchTpsBit / 3);
+                newInformation.addManyTimes(ampliMax, nbEchTpsBit / 3);
+                newInformation.addManyTimes(0.00f, nbEchTpsBit / 3);
             } else {
-                for (int n = 0; n < nbEchTpsBit; n++) {
-                    newInformation.add(0.00f);
-                }
+                newInformation.addManyTimes(0.00f, nbEchTpsBit);
             }
         }
         return newInformation;

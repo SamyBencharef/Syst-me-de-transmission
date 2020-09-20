@@ -5,9 +5,8 @@ import information.Information;
 import java.util.Random;
 
 /**
- * Class that defines the component source and that emits random information defined by the user.
- * The outype type is a Boolean.
- * The class implements the class Source.
+ * Class that defines the component source and that emits random information defined by the user. The outype type is a
+ * Boolean. The class implements the class Source.
  *
  * @author Thierry JIAO - Samy BENCHAREF - Thanh Huy LE - Milo THIBAUD - Lucas BERENGUER
  */

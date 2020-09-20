@@ -60,6 +60,25 @@ public class Information<T> implements Iterable<T> {
         this.content.add(valeur);
     }
 
+    /**
+     * Add an element n times at the end of the information
+     *
+     * @param value  Element to add
+     * @param number Number of elements to add
+     */
+    public void addManyTimes(T value, int number) {
+        for (int i = 0; i < number; i++) this.content.add(value);
+    }
+
+    /**
+     * Remove an element in the information
+     *
+     * @param number Index of the element to remove
+     */
+    public void remove(int number) {
+        this.content.remove(number);
+    }
+
 
     /**
      * pour comparer l'information courante avec une autre information

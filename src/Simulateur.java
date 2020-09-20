@@ -57,6 +57,10 @@ public class Simulateur {
      * la valeur max de l'amplitude du signal
      */
     private Float ampliMax = 1.00f;
+    /**
+     * la valeur du rapport signal sur bruit par bit (en dB)
+     */
+    private Float snrpb = 0.00f;
 
 
     /**
@@ -112,7 +116,7 @@ public class Simulateur {
         }
         */
 
-        /* TP2 Instructions */
+        /* TP2 Instructions
         // Set the arguments given by the user
         analyseArguments(args);
 
@@ -132,6 +136,48 @@ public class Simulateur {
         Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
         Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
         TransmetteurParfaitAnalogique transmetteurAnalogique = new TransmetteurParfaitAnalogique();
+        destination = new DestinationFinale();
+
+        // Connections between components
+        source.connecter(emetteur);
+        emetteur.connecter(transmetteurAnalogique);
+        transmetteurAnalogique.connecter(recepteur);
+        recepteur.connecter(destination);
+
+        // Display graphics
+        if (affichage) {
+            SondeLogique sonde1 = new SondeLogique("SEND MESSAGE LOGICAL", 100);
+            SondeAnalogique sonde2 = new SondeAnalogique("SEND MESSAGE ANALOGICAL");
+            SondeAnalogique sonde3 = new SondeAnalogique("RECEIVED MESSAGE ANALOGICAL");
+            SondeLogique sonde4 = new SondeLogique("RECEVEID MESSAGE LOGICAL", 100);
+            source.connecter(sonde1);
+            emetteur.connecter(sonde2);
+            transmetteurAnalogique.connecter(sonde3);
+            recepteur.connecter(sonde4);
+        }
+
+         */
+
+        /* TP3 Instructions */
+        // Set the arguments given by the user
+        analyseArguments(args);
+
+        // Instantiations of source, transmitter, recepteur, emetteur and destination
+        // If the message is random and the seed is given
+        if (messageAleatoire && aleatoireAvecGerme) {
+            source = new SourceAleatoire(nbBitsMess, seed);
+        }
+        // If the message is random
+        else if (messageAleatoire) {
+            source = new SourceAleatoire(nbBitsMess);
+        }
+        // If the message was given by the user
+        else {
+            source = new SourceFixe(messageString);
+        }
+        Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
+        TransmetteurBruiteAnalogique transmetteurAnalogique = new TransmetteurBruiteAnalogique(snrpb, ne);
         destination = new DestinationFinale();
 
         // Connections between components
@@ -236,6 +282,14 @@ public class Simulateur {
                 if (ampliMin >= ampliMax || ampliMin > 0 || ampliMax < 0) {
                     throw new ArgumentsException("Valeur du parametre -ampl invalide : " + args[i]);
                 }
+            } else if (args[i].matches("-snrpb")) {
+                i++;
+                // Treatment
+                if (args[i].matches("[+-]?([0-9]*[.])?[0-9]+")) {
+                    snrpb = Float.valueOf(args[i]);
+                } else {
+                    throw new ArgumentsException("Valeur du parametre -snrpb invalide : " + args[i]);
+                }
             } else {
                 throw new ArgumentsException("Option invalide :" + args[i]);
             }
@@ -282,7 +336,7 @@ public class Simulateur {
 
         // Compare char per char
         for (int i = 0; i < nbBits; i++) {
-            if (sendMessage.iemeElement(i) != receivedMessage.iemeElement(i)) bitError++;
+            if (!sendMessage.iemeElement(i).equals(receivedMessage.iemeElement(i))) bitError++;
         }
 
         return (float) bitError / (float) nbBits;
@@ -307,7 +361,9 @@ public class Simulateur {
         }
 
         try {
+//            System.out.println(System.currentTimeMillis());
             simulateur.execute();
+//            System.out.println(System.currentTimeMillis());
             float tauxErreurBinaire = simulateur.calculTauxErreurBinaire();
             String s = "java  Simulateur  ";
             for (String arg : args) {
