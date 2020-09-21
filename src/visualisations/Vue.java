@@ -1,10 +1,10 @@
 package visualisations;
-	
-	
-/** 
+
+
+/**
  * @author B. Prou
- *
  */
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -12,40 +12,43 @@ import javax.swing.*;
 import java.awt.geom.*;
 import java.lang.*;
 
-public class Vue extends JFrame{
-    private static LinkedList<Vue> lesVues=new LinkedList<Vue>();
+public class Vue extends JFrame {
+    private static LinkedList<Vue> lesVues = new LinkedList<Vue>();
     private static final long serialVersionUID = 1917L;
-    
-    protected  static int xPosition = 0;
-    protected  static int yPosition = 0;
+
+    protected static int xPosition = 0;
+    protected static int yPosition = 0;
     private static int yDecalage = 200;
- 
+
     public static int getXPosition() {
-	xPosition += 0;
-	return xPosition - 0;
-    }  
+        xPosition += 0;
+        return xPosition - 0;
+    }
 
     public static int getYPosition() {
-	yPosition += yDecalage;
-	return yPosition - yDecalage;
-    }  
-   	
-   
-    public  Vue (String nom) {          
-	super(nom);
-	lesVues.add(this);
+        yPosition += yDecalage;
+        return yPosition - yDecalage;
     }
-    public static void resetPosition(){
-	yPosition = 0;
+
+
+    public Vue(String nom) {
+        super(nom);
+        lesVues.add(this);
     }
-    public static void setXPosition(int x){
-	xPosition = x;
+
+    public static void resetPosition() {
+        yPosition = 0;
     }
-    public static void kill(){
-	for(Vue v:lesVues)
-	    v.dispose();
-	lesVues.clear();
-	resetPosition();
+
+    public static void setXPosition(int x) {
+        xPosition = x;
     }
-   
+
+    public static void kill() {
+        for (Vue v : lesVues)
+            v.dispose();
+        lesVues.clear();
+        resetPosition();
+    }
+
 }

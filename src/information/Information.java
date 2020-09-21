@@ -3,17 +3,17 @@ package information;
 import java.util.*;
 
 /**
- * @author prou
+ * @author Thierry JIAO - Samy BENCHAREF - Thanh Huy LE - Milo THIBAUD - Lucas BERENGUER
  */
 public class Information<T> implements Iterable<T> {
 
-    private LinkedList<T> content;
+    private ArrayList<T> content;
 
     /**
      * pour construire une information vide
      */
     public Information() {
-        this.content = new LinkedList<T>();
+        this.content = new ArrayList<T>();
     }
 
     /**
@@ -22,10 +22,8 @@ public class Information<T> implements Iterable<T> {
      * @param content le tableau d'éléments pour initialiser l'information construite
      */
     public Information(T[] content) {
-        this.content = new LinkedList<T>();
-        for (T t : content) {
-            this.content.addLast(t);
-        }
+        this.content = new ArrayList<T>();
+        Collections.addAll(this.content, content);
     }
 
     /**
@@ -62,24 +60,45 @@ public class Information<T> implements Iterable<T> {
         this.content.add(valeur);
     }
 
+    /**
+     * Add an element n times at the end of the information
+     *
+     * @param value  Element to add
+     * @param number Number of elements to add
+     */
+    public void addManyTimes(T value, int number) {
+        for (int i = 0; i < number; i++) this.content.add(value);
+    }
+
+    /**
+     * Remove an element in the information
+     *
+     * @param number Index of the element to remove
+     */
+    public void remove(int number) {
+        this.content.remove(number);
+    }
+
 
     /**
      * pour comparer l'information courante avec une autre information
      *
      * @param o l'information  avec laquelle se comparer
-     * @return "true" si les 2 informations contiennent les mêmes
-     * éléments aux mêmes places; "false" dans les autres cas
+     * @return "true" si les 2 informations contiennent les mêmes éléments aux mêmes places; "false" dans les autres cas
      */
     @SuppressWarnings("unchecked")
     public boolean equals(Object o) {
-        if (!(o instanceof Information))
+        if (!(o instanceof Information)) {
             return false;
+        }
         Information<T> information = (Information<T>) o;
-        if (this.nbElements() != information.nbElements())
+        if (this.nbElements() != information.nbElements()) {
             return false;
+        }
         for (int i = 0; i < this.nbElements(); i++) {
-            if (!this.iemeElement(i).equals(information.iemeElement(i)))
+            if (!this.iemeElement(i).equals(information.iemeElement(i))) {
                 return false;
+            }
         }
         return true;
     }
