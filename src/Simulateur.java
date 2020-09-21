@@ -42,25 +42,29 @@ public class Simulateur {
      */
     private String messageString = "100";
     /**
-     * la chaîne de la forme d'onde pour une transmission analogique
+     * la chaîne de la forme d'onde pour une transmission analogique TP 2
      */
     private String waveForm = "RZ";
     /**
-     * la valeur du nombre d’échantillons par bit pour un echantillonnage si elle n'est pas imposee
+     * la valeur du nombre d’échantillons par bit pour un echantillonnage si elle n'est pas imposee TP 2
      */
     private Integer ne = 30;
     /**
-     * la valeur min de l'amplitude du signal
+     * la valeur min de l'amplitude du signal TP 2
      */
     private Float ampliMin = 0.00f;
     /**
-     * la valeur max de l'amplitude du signal
+     * la valeur max de l'amplitude du signal TP 2
      */
     private Float ampliMax = 1.00f;
     /**
-     * la valeur du rapport signal sur bruit par bit (en dB)
+     * la valeur du rapport signal sur bruit par bit (en dB) TP 3
      */
     private Float snrpb = 0.00f;
+    /**
+     * indique si la densité de probabilité du bruit doit être affichée TP 3
+     */
+    private boolean hist = false;
 
 
     /**
@@ -177,7 +181,7 @@ public class Simulateur {
         }
         Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
         Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
-        TransmetteurBruiteAnalogique transmetteurAnalogique = new TransmetteurBruiteAnalogique(snrpb, ne);
+        TransmetteurBruiteAnalogique transmetteurAnalogique = new TransmetteurBruiteAnalogique(snrpb, ne, hist);
         destination = new DestinationFinale();
 
         // Connections between components
@@ -290,6 +294,9 @@ public class Simulateur {
                 } else {
                     throw new ArgumentsException("Valeur du parametre -snrpb invalide : " + args[i]);
                 }
+            } else if (args[i].matches("-hist")) {
+                hist = true;
+                i++;
             } else {
                 throw new ArgumentsException("Option invalide :" + args[i]);
             }
