@@ -1,3 +1,76 @@
 #!/bin/bash
-find ./tests -name "\*.java" \ | sed -e "s/\.java//" -e "s/\//./g" \
-    | xargs java org.junit.runner.JUnitCore
+echo "ATTENTION : il faut que le fichier simulateur.java ait été compilé !"
+
+# TP 1
+echo -e "\e[1m\e[34mTP1 \e[0m \e[39m"
+echo -e "Test 1 : Vérifie si TEB  est égale à 0.00 \nMessage aléatoire de 300 bits avec un seed donné"
+output=$(java -cp ./bin Simulateur -mess 300 -seed 90 -TP 1)
+if [ "$output" = "java  Simulateur  -mess  300  -seed  90  -TP  1    =>   TEB : 0.0" ]
+then
+	echo -e "\e[32mValidate\e[39m"
+else
+	echo -e "\e[31mError\e[39m"
+fi
+echo -e "Test 2 : Vérifie si TEB  est égale à 0.00 \nMessage défini '101110011'"
+output=$(java -cp ./bin Simulateur -mess "101110011" -TP 1)
+echo $output
+if [ "$output" = "java  Simulateur  -mess  101110011  -TP  1    =>   TEB : 0.0" ]
+then
+	echo -e "\e[32mValidate\e[39m"
+else
+	echo -e "\e[31mError\e[39m"
+fi
+
+# TP 2
+echo -e "\e[1m\e[34mTP2 \e[0m \e[39m"
+echo -e "Test 1 : Vérifie si TEB  est égale à 0.00 \nMessage défini '101110011', 600 ech par bit, NRZT et d'amplitudes min = -5 max = 5"
+output=$(java -cp ./bin Simulateur -mess "101110011" -form "NRZT" -ampl -5 5 -nbEch 600 -TP 2)
+if [ "$output" = "java  Simulateur  -mess  101110011  -form  NRZT  -ampl  -5  5  -nbEch  600  -TP  2    =>   TEB : 0.0" ]
+then
+	echo -e "\e[32mValidate\e[39m"
+else
+	echo -e "\e[31mError\e[39m"
+fi
+echo "Test 2 : Vérifie si TEB  est égale à 0.00 \nMessage défini '101110011', 600 ech par bit, NRZ et d'amplitudes min = -5 max = 5"
+output=$(java -cp ./bin Simulateur -mess "101110011" -form "NRZ" -ampl -5 5 -nbEch 600 -TP 2)
+if [ "$output" = "java  Simulateur  -mess  101110011  -form  NRZ  -ampl  -5  5  -nbEch  600  -TP  2    =>   TEB : 0.0" ]
+then
+	echo -e "\e[32mValidate\e[39m"
+else
+	echo -e "\e[31mError\e[39m"
+fi
+echo "Test 3 : Vérifie si TEB  est égale à 0.00 \nMessage défini '101110011', 600 ech par bit, RZ et d'amplitudes min = 0 max = 5"
+output=$(java -cp ./bin Simulateur -mess "101110011" -form "RZ" -ampl 0 5 -nbEch 600 -TP 2)
+if [ "$output" = "java  Simulateur  -mess  101110011  -form  RZ  -ampl  0  5  -nbEch  600  -TP  2    =>   TEB : 0.0" ]
+then
+	echo -e "\e[32mValidate\e[39m"
+else
+	echo -e "\e[31mError\e[39m"
+fi
+
+# TP 3
+echo -e "\e[1m\e[34mTP3 \e[0m \e[39m"
+echo -e "Test 1 : Vérifie si TEB différent de 0.00 \nMessage défini '101110011', 600 ech par bit, NRZT et d'amplitudes min = -5 max = 5, snrpb = -5"
+output=$(java -cp ./bin Simulateur -mess "101110011" -form "NRZT" -ampl -5 5 -nbEch 600 -snrpb  -5.0 -TP 3)
+if [ "$output" = "java  Simulateur  -mess  101110011  -form  NRZT  -ampl  -5  5  -nbEch  600  -snrpb  -5.0  -TP  3    =>   TEB : 0.0" ]
+then
+	echo -e "\e[31mError\e[39m"
+else
+	echo -e "\e[32mValidate\e[39m"
+fi
+echo -e "Test 2 : Vérifie si TEB différent de 0.00 \nMessage défini '101110011', 600 ech par bit, NRZ et d'amplitudes min = -5 max = 5"
+output=$(java -cp ./bin Simulateur -mess "101110011" -form "NRZ" -ampl -5 5 -nbEch 600 -snrpb  -5.0 -TP 3)
+if [ "$output" = "java  Simulateur  -mess  101110011  -form  NRZ  -ampl  -5  5  -nbEch  600  -snrpb  -5.0  -TP  3    =>   TEB : 0.0" ]
+then
+	echo -e "\e[31mError\e[39m"
+else
+	echo -e "\e[32mValidate\e[39m"
+fi
+echo -e "Test 3 : Vérifie si TEB différent de 0.00 \nMessage défini '101110011', 600 ech par bit, RZ et d'amplitudes min = 0 max = 5"
+output=$(java -cp ./bin Simulateur -mess "101110011" -form "RZ" -ampl 0 5 -nbEch 600 -snrpb  -5.0 -TP 3)
+if [ "$output" = "java  Simulateur  -mess  101110011  -form  RZ  -ampl  -5  5  -nbEch  600  -snrpb  -5.0  -TP  3    =>   TEB : 0.0" ]
+then
+	echo -e "\e[31mError\e[39m"
+else
+	echo -e "\e[32mValidate\e[39m"
+fi
