@@ -18,6 +18,10 @@ import visualisations.*;
 public class Simulateur {
 
     /**
+     * indique si la version du TP à utiliser
+     */
+    private Integer TP = 3;
+    /**
      * indique si le Simulateur utilise des sondes d'affichage
      */
     private boolean affichage = false;
@@ -42,25 +46,29 @@ public class Simulateur {
      */
     private String messageString = "100";
     /**
-     * la chaîne de la forme d'onde pour une transmission analogique
+     * la chaîne de la forme d'onde pour une transmission analogique TP 2
      */
     private String waveForm = "RZ";
     /**
-     * la valeur du nombre d’échantillons par bit pour un echantillonnage si elle n'est pas imposee
+     * la valeur du nombre d’échantillons par bit pour un echantillonnage si elle n'est pas imposee TP 2
      */
     private Integer ne = 30;
     /**
-     * la valeur min de l'amplitude du signal
+     * la valeur min de l'amplitude du signal TP 2
      */
     private Float ampliMin = 0.00f;
     /**
-     * la valeur max de l'amplitude du signal
+     * la valeur max de l'amplitude du signal TP 2
      */
     private Float ampliMax = 1.00f;
     /**
-     * la valeur du rapport signal sur bruit par bit (en dB)
+     * la valeur du rapport signal sur bruit par bit (en dB) TP 3
      */
     private Float snrpb = 0.00f;
+    /**
+     * indique si la densité de probabilité du bruit doit être affichée TP 3
+     */
+    private boolean hist = false;
 
 
     /**
@@ -89,116 +97,22 @@ public class Simulateur {
      * @throws ArgumentsException si un des arguments est incorrect
      */
     public Simulateur(String[] args) throws ArgumentsException {
-        /* TP1 Instructions
+
         // Set the arguments given by the user
         analyseArguments(args);
 
-        // Instantiations of source, transmitter and destination
-        // If the message is random and the seed is given
-        if (messageAleatoire && aleatoireAvecGerme) source = new SourceAleatoire(nbBitsMess, seed);
-            // If the message is random
-        else if (messageAleatoire) source = new SourceAleatoire(nbBitsMess);
-            // If the message was given by the user
-        else source = new SourceFixe(messageString);
-        transmetteurLogique = new TransmetteurParfaitLogique();
-        destination = new DestinationFinale();
-
-        // Connections between components
-        source.connecter(transmetteurLogique);
-        transmetteurLogique.connecter(destination);
-
-        // Display graphics
-        if (affichage) {
-            SondeLogique sonde1 = new SondeLogique("SEND MESSAGE", 100);
-            SondeLogique sonde2 = new SondeLogique("RECEIVED MESSAGE", 100);
-            source.connecter(sonde1);
-            transmetteurLogique.connecter(sonde2);
+        // Run the version of the TP
+        switch (TP) {
+            case 1:
+                TP1();
+                break;
+            case 2:
+                TP2();
+                break;
+            case 3:
+                TP3();
+                break;
         }
-        */
-
-        /* TP2 Instructions
-        // Set the arguments given by the user
-        analyseArguments(args);
-
-        // Instantiations of source, transmitter, recepteur, emetteur and destination
-        // If the message is random and the seed is given
-        if (messageAleatoire && aleatoireAvecGerme) {
-            source = new SourceAleatoire(nbBitsMess, seed);
-        }
-        // If the message is random
-        else if (messageAleatoire) {
-            source = new SourceAleatoire(nbBitsMess);
-        }
-        // If the message was given by the user
-        else {
-            source = new SourceFixe(messageString);
-        }
-        Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
-        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
-        TransmetteurParfaitAnalogique transmetteurAnalogique = new TransmetteurParfaitAnalogique();
-        destination = new DestinationFinale();
-
-        // Connections between components
-        source.connecter(emetteur);
-        emetteur.connecter(transmetteurAnalogique);
-        transmetteurAnalogique.connecter(recepteur);
-        recepteur.connecter(destination);
-
-        // Display graphics
-        if (affichage) {
-            SondeLogique sonde1 = new SondeLogique("SEND MESSAGE LOGICAL", 100);
-            SondeAnalogique sonde2 = new SondeAnalogique("SEND MESSAGE ANALOGICAL");
-            SondeAnalogique sonde3 = new SondeAnalogique("RECEIVED MESSAGE ANALOGICAL");
-            SondeLogique sonde4 = new SondeLogique("RECEVEID MESSAGE LOGICAL", 100);
-            source.connecter(sonde1);
-            emetteur.connecter(sonde2);
-            transmetteurAnalogique.connecter(sonde3);
-            recepteur.connecter(sonde4);
-        }
-
-         */
-
-        /* TP3 Instructions */
-        // Set the arguments given by the user
-        analyseArguments(args);
-
-        // Instantiations of source, transmitter, recepteur, emetteur and destination
-        // If the message is random and the seed is given
-        if (messageAleatoire && aleatoireAvecGerme) {
-            source = new SourceAleatoire(nbBitsMess, seed);
-        }
-        // If the message is random
-        else if (messageAleatoire) {
-            source = new SourceAleatoire(nbBitsMess);
-        }
-        // If the message was given by the user
-        else {
-            source = new SourceFixe(messageString);
-        }
-        Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
-        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
-        TransmetteurBruiteAnalogique transmetteurAnalogique = new TransmetteurBruiteAnalogique(snrpb, ne);
-        destination = new DestinationFinale();
-
-        // Connections between components
-        source.connecter(emetteur);
-        emetteur.connecter(transmetteurAnalogique);
-        transmetteurAnalogique.connecter(recepteur);
-        recepteur.connecter(destination);
-
-        // Display graphics
-        if (affichage) {
-            SondeLogique sonde1 = new SondeLogique("SEND MESSAGE LOGICAL", 100);
-            SondeAnalogique sonde2 = new SondeAnalogique("SEND MESSAGE ANALOGICAL");
-            SondeAnalogique sonde3 = new SondeAnalogique("RECEIVED MESSAGE ANALOGICAL");
-            SondeLogique sonde4 = new SondeLogique("RECEVEID MESSAGE LOGICAL", 100);
-            source.connecter(sonde1);
-            emetteur.connecter(sonde2);
-            transmetteurAnalogique.connecter(sonde3);
-            recepteur.connecter(sonde4);
-        }
-
-
     }
 
 
@@ -290,6 +204,16 @@ public class Simulateur {
                 } else {
                     throw new ArgumentsException("Valeur du parametre -snrpb invalide : " + args[i]);
                 }
+            } else if (args[i].matches("-hist")) {
+                hist = true;
+            } else if (args[i].matches("-TP")) {
+                i++;
+                // Treatment
+                if (args[i].matches("[1-3]")) {
+                    TP = Integer.valueOf(args[i]);
+                } else {
+                    throw new ArgumentsException("Valeur du parametre -TP invalide : " + args[i]);
+                }
             } else {
                 throw new ArgumentsException("Option invalide :" + args[i]);
             }
@@ -342,6 +266,112 @@ public class Simulateur {
         return (float) bitError / (float) nbBits;
     }
 
+    private void TP1() {
+        // Instantiations of source, transmitter and destination
+        // If the message is random and the seed is given
+        if (messageAleatoire && aleatoireAvecGerme) {
+            source = new SourceAleatoire(nbBitsMess, seed);
+        }
+        // If the message is random
+        else if (messageAleatoire) {
+            source = new SourceAleatoire(nbBitsMess);
+        }
+        // If the message was given by the user
+        else {
+            source = new SourceFixe(messageString);
+        }
+        transmetteurLogique = new TransmetteurParfaitLogique();
+        destination = new DestinationFinale();
+
+        // Connections between components
+        source.connecter(transmetteurLogique);
+        transmetteurLogique.connecter(destination);
+
+        // Display graphics
+        if (affichage) {
+            SondeLogique sonde1 = new SondeLogique("SEND MESSAGE", 100);
+            SondeLogique sonde2 = new SondeLogique("RECEIVED MESSAGE", 100);
+            source.connecter(sonde1);
+            transmetteurLogique.connecter(sonde2);
+        }
+    }
+
+    private void TP2() {
+
+        // Instantiations of source, transmitter, recepteur, emetteur and destination
+        // If the message is random and the seed is given
+        if (messageAleatoire && aleatoireAvecGerme) {
+            source = new SourceAleatoire(nbBitsMess, seed);
+        }
+        // If the message is random
+        else if (messageAleatoire) {
+            source = new SourceAleatoire(nbBitsMess);
+        }
+        // If the message was given by the user
+        else {
+            source = new SourceFixe(messageString);
+        }
+        Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
+        TransmetteurParfaitAnalogique transmetteurAnalogique = new TransmetteurParfaitAnalogique();
+        destination = new DestinationFinale();
+
+        // Connections between components
+        source.connecter(emetteur);
+        emetteur.connecter(transmetteurAnalogique);
+        transmetteurAnalogique.connecter(recepteur);
+        recepteur.connecter(destination);
+
+        // Display graphics
+        if (affichage) {
+            SondeLogique sonde1 = new SondeLogique("SEND MESSAGE LOGICAL", 100);
+            SondeAnalogique sonde2 = new SondeAnalogique("SEND MESSAGE ANALOGICAL");
+            SondeAnalogique sonde3 = new SondeAnalogique("RECEIVED MESSAGE ANALOGICAL");
+            SondeLogique sonde4 = new SondeLogique("RECEVEID MESSAGE LOGICAL", 100);
+            source.connecter(sonde1);
+            emetteur.connecter(sonde2);
+            transmetteurAnalogique.connecter(sonde3);
+            recepteur.connecter(sonde4);
+        }
+    }
+
+    private void TP3() {
+        // Instantiations of source, transmitter, recepteur, emetteur and destination
+        // If the message is random and the seed is given
+        if (messageAleatoire && aleatoireAvecGerme) {
+            source = new SourceAleatoire(nbBitsMess, seed);
+        }
+        // If the message is random
+        else if (messageAleatoire) {
+            source = new SourceAleatoire(nbBitsMess);
+        }
+        // If the message was given by the user
+        else {
+            source = new SourceFixe(messageString);
+        }
+        Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
+        TransmetteurBruiteAnalogique transmetteurAnalogique = new TransmetteurBruiteAnalogique(snrpb, ne, hist);
+        destination = new DestinationFinale();
+
+        // Connections between components
+        source.connecter(emetteur);
+        emetteur.connecter(transmetteurAnalogique);
+        transmetteurAnalogique.connecter(recepteur);
+        recepteur.connecter(destination);
+
+        // Display graphics
+        if (affichage) {
+            SondeLogique sonde1 = new SondeLogique("SEND MESSAGE LOGICAL", 100);
+            SondeAnalogique sonde2 = new SondeAnalogique("SEND MESSAGE ANALOGICAL");
+            SondeAnalogique sonde3 = new SondeAnalogique("RECEIVED MESSAGE ANALOGICAL");
+            SondeLogique sonde4 = new SondeLogique("RECEVEID MESSAGE LOGICAL", 100);
+            source.connecter(sonde1);
+            emetteur.connecter(sonde2);
+            transmetteurAnalogique.connecter(sonde3);
+            recepteur.connecter(sonde4);
+        }
+    }
 
     /**
      * La fonction main instancie un Simulateur à l'aide des arguments paramètres et affiche le résultat de l'exécution
@@ -375,4 +405,5 @@ public class Simulateur {
         }
     }
 }
+
 

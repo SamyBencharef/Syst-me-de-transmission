@@ -3,7 +3,10 @@ package transmetteurs;
 import destinations.DestinationInterface;
 import information.Information;
 import information.InformationNonConforme;
+import visualisations.Histogram;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -17,11 +20,13 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
 
     private final Float snrpb;
     private final Integer nbEchTpsBit;
+    private final boolean histogram;
 
-    public TransmetteurBruiteAnalogique(Float snrpb, Integer nbEchTpsBit) {
+    public TransmetteurBruiteAnalogique(Float snrpb, Integer nbEchTpsBit, boolean hist) {
         super();
         this.snrpb = snrpb;
         this.nbEchTpsBit = nbEchTpsBit;
+        this.histogram = hist;
     }
 
     @Override
@@ -48,6 +53,7 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
      */
     private Information<Float> addNoise(Information<Float> information) {
         Information<Float> noisyInformation = new Information<>();
+        ArrayList<Float> arrayNoise = new ArrayList();
         Random ran = new Random();
         float standardDeviation = (float) Math.sqrt((getSignalPower(information) * nbEchTpsBit) / (2 * Math.pow(10,
                 snrpb / 10)));
@@ -55,9 +61,11 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
         for (int i = 0; i < information.nbElements(); i++) {
             float noise =
                     (float) (standardDeviation * Math.sqrt(-2 * Math.log(1 - ran.nextFloat())) * Math.cos(2 * Math.PI * ran.nextFloat()));
+            arrayNoise.add(noise);
             noisyInformation.add(noise + information.iemeElement(i));
         }
-
+        // Display the gaussian noise as a density probability
+        if (histogram) showNoise(arrayNoise);
         return noisyInformation;
     }
 
@@ -77,4 +85,21 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
         }
         return signalPower;
     }
+
+    /**
+     * Displays the gaussian noise as a density probability
+     *
+     * @param noise (ArrayList<Float) noise
+     */
+    private void showNoise(ArrayList<Float> noise) {
+        // Format the value to x.xx
+        for (int i = 0; i < noise.size(); i++) {
+            noise.set(i, (float) (Math.floor(noise.get(i) * 100) / 100));
+        }
+        // Sort the values
+        Collections.sort(noise);
+        // Display
+        new Histogram(noise, "Noise");
+    }
+
 }
