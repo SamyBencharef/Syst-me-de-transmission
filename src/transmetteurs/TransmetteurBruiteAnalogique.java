@@ -21,12 +21,22 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
     private final Float snrpb;
     private final Integer nbEchTpsBit;
     private final boolean histogram;
+    private final Integer seed;
 
     public TransmetteurBruiteAnalogique(Float snrpb, Integer nbEchTpsBit, boolean hist) {
         super();
         this.snrpb = snrpb;
         this.nbEchTpsBit = nbEchTpsBit;
         this.histogram = hist;
+        this.seed = null;
+    }
+
+    public TransmetteurBruiteAnalogique(Float snrpb, Integer nbEchTpsBit, boolean hist, int seed) {
+        super();
+        this.snrpb = snrpb;
+        this.nbEchTpsBit = nbEchTpsBit;
+        this.histogram = hist;
+        this.seed = seed;
     }
 
     @Override
@@ -49,12 +59,15 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
      * Adds a gaussian noise in the information
      *
      * @param information (Information<Float>) Initial information
-     * @return noisy information
+     * @return noisy information.
      */
     private Information<Float> addNoise(Information<Float> information) {
         Information<Float> noisyInformation = new Information<>();
         ArrayList<Float> arrayNoise = new ArrayList();
         Random ran = new Random();
+        if (seed != null) {
+            ran = new Random(seed);
+        }
         float standardDeviation = (float) Math.sqrt((getSignalPower(information) * nbEchTpsBit) / (2 * Math.pow(10,
                 snrpb / 10)));
         // Mix the noise and information

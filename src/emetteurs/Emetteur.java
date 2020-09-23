@@ -142,13 +142,22 @@ public class Emetteur extends Transmetteur<Boolean, Float> {
         // Iterate through the variable Information<Boolean>
         for (int i = 0; i < information.nbElements(); i++) {
             if (information.iemeElement(i)) {
-                newInformation.addManyTimes(0.00f, nbEchTpsBit / 3);
-                newInformation.addManyTimes(ampliMax, nbEchTpsBit / 3);
-                newInformation.addManyTimes(0.00f, nbEchTpsBit / 3);
+                for (int n = 0; n < nbEchTpsBit / 3; n++) {
+                    newInformation.add(0.00f);
+                }
+                for (int n = nbEchTpsBit / 3; n < 2 * nbEchTpsBit / 3; n++) {
+                    newInformation.add(ampliMax);
+                }
+                for (int n = 2 * nbEchTpsBit / 3; n < nbEchTpsBit; n++) {
+                    newInformation.add(0.00f);
+                }
             } else {
-                newInformation.addManyTimes(0.00f, nbEchTpsBit);
+                for (int n = 0; n < nbEchTpsBit; n++) {
+                    newInformation.add(0.00f);
+                }
             }
         }
+
         return newInformation;
 
     }

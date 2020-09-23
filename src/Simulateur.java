@@ -352,6 +352,10 @@ public class Simulateur {
         Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
         Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
         TransmetteurBruiteAnalogique transmetteurAnalogique = new TransmetteurBruiteAnalogique(snrpb, ne, hist);
+        if (seed != null) {
+            transmetteurAnalogique =
+                    new TransmetteurBruiteAnalogique(snrpb, ne, hist, seed);
+        }
         destination = new DestinationFinale();
 
         // Connections between components
