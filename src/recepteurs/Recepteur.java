@@ -145,6 +145,7 @@ public class Recepteur extends Transmetteur<Float, Boolean> {
                 newInformation.add(false);
             }
         }
+
         return newInformation;
 
     }
