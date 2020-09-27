@@ -1,10 +1,13 @@
 import emetteurs.Emetteur;
 import information.Information;
+import information.InformationNonConforme;
 import recepteurs.Recepteur;
 import sources.*;
 import destinations.*;
 import transmetteurs.*;
 import visualisations.*;
+
+import java.util.ArrayList;
 
 
 /**
@@ -20,7 +23,7 @@ public class Simulateur {
     /**
      * indique si la version du TP à utiliser
      */
-    private Integer TP = 3;
+    private Integer TP = 4;
     /**
      * indique si le Simulateur utilise des sondes d'affichage
      */
@@ -69,6 +72,14 @@ public class Simulateur {
      * indique si la densité de probabilité du bruit doit être affichée TP 3
      */
     private boolean hist = false;
+    /**
+     * La valeur du décalage temporel (en nombre d'écnantillons) entre le trajet indirect et direct TP 4
+     */
+    private ArrayList<Integer> dt = new ArrayList<>();
+    /**
+     * La valeur de l'amplitude relative du signal de trajet indirect par rapport au trajet direct TP 4
+     */
+    private ArrayList<Float> ar = new ArrayList<>();
 
 
     /**
@@ -112,6 +123,11 @@ public class Simulateur {
             case 3:
                 TP3();
                 break;
+            case 4:
+                TP4();
+                break;
+            default:
+                throw new ArgumentsException("Valeur du parametre -TP invalide : " + TP);
         }
     }
 
@@ -133,6 +149,7 @@ public class Simulateur {
      * @throws ArgumentsException si un des arguments est incorrect.
      */
     public void analyseArguments(String[] args) throws ArgumentsException {
+
 
         for (int i = 0; i < args.length; i++) {
 
@@ -209,10 +226,28 @@ public class Simulateur {
             } else if (args[i].matches("-TP")) {
                 i++;
                 // Treatment
-                if (args[i].matches("[1-3]")) {
+                if (args[i].matches("[1-4]")) {
                     TP = Integer.valueOf(args[i]);
                 } else {
                     throw new ArgumentsException("Valeur du parametre -TP invalide : " + args[i]);
+                }
+            } else if (args[i].matches("-ti")) {
+                int limit = 0;
+                // Treatment
+                while (limit < 5 && i < args.length - 1 && (!args[i + 1].matches("^-.*$"))) {
+                    i++;
+                    if (args[i].matches("^[1-9]\\d*$")) {
+                        dt.add(Integer.valueOf(args[i]));
+                    } else {
+                        throw new ArgumentsException("Valeur du parametre -ti invalide : " + args[i]);
+                    }
+                    i++;
+                    if (args[i].matches("[+]?([0-9]*[.])?[0-9]+")) {
+                        ar.add(Float.valueOf(args[i]));
+                    } else {
+                        throw new ArgumentsException("Valeur du parametre -ti invalide : " + args[i]);
+                    }
+                    limit++;
                 }
             } else {
                 throw new ArgumentsException("Option invalide :" + args[i]);
@@ -222,6 +257,12 @@ public class Simulateur {
         // Check if the args(-ampl)
         if (ampliMin != 0 && waveForm.equals("RZ")) {
             throw new ArgumentsException("Valeur du parametre -ampl invalide : " + ampliMin);
+        }
+
+        // (Check if dt and ar are empty)
+        if (ar.isEmpty() && dt.isEmpty()) {
+            ar.add(0.00f);
+            dt.add(0);
         }
 
     }
@@ -266,6 +307,9 @@ public class Simulateur {
         return (float) bitError / (float) nbBits;
     }
 
+    /**
+     * This method runs the Travail pratique 1
+     */
     private void TP1() {
         // Instantiations of source, transmitter and destination
         // If the message is random and the seed is given
@@ -296,6 +340,9 @@ public class Simulateur {
         }
     }
 
+    /**
+     * This method runs the Travail pratique 2
+     */
     private void TP2() {
 
         // Instantiations of source, transmitter, recepteur, emetteur and destination
@@ -335,6 +382,9 @@ public class Simulateur {
         }
     }
 
+    /**
+     * This method runs the Travail pratique 3
+     */
     private void TP3() {
         // Instantiations of source, transmitter, recepteur, emetteur and destination
         // If the message is random and the seed is given
@@ -355,6 +405,50 @@ public class Simulateur {
         if (seed != null) {
             transmetteurAnalogique =
                     new TransmetteurBruiteAnalogique(snrpb, ne, hist, seed);
+        }
+        destination = new DestinationFinale();
+
+        // Connections between components
+        source.connecter(emetteur);
+        emetteur.connecter(transmetteurAnalogique);
+        transmetteurAnalogique.connecter(recepteur);
+        recepteur.connecter(destination);
+
+        // Display graphics
+        if (affichage) {
+            SondeLogique sonde1 = new SondeLogique("SEND MESSAGE LOGICAL", 100);
+            SondeAnalogique sonde2 = new SondeAnalogique("SEND MESSAGE ANALOGICAL");
+            SondeAnalogique sonde3 = new SondeAnalogique("RECEIVED MESSAGE ANALOGICAL");
+            SondeLogique sonde4 = new SondeLogique("RECEVEID MESSAGE LOGICAL", 100);
+            source.connecter(sonde1);
+            emetteur.connecter(sonde2);
+            transmetteurAnalogique.connecter(sonde3);
+            recepteur.connecter(sonde4);
+        }
+    }
+
+    /**
+     * This method runs the Travail pratique 4
+     */
+    private void TP4() {
+        // Instantiations of source, transmitter, recepteur, emetteur and destination
+        // If the message is random and the seed is given
+        if (messageAleatoire && aleatoireAvecGerme) {
+            source = new SourceAleatoire(nbBitsMess, seed);
+        }
+        // If the message is random
+        else if (messageAleatoire) {
+            source = new SourceAleatoire(nbBitsMess);
+        }
+        // If the message was given by the user
+        else {
+            source = new SourceFixe(messageString);
+        }
+        Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
+        TransmetteurBruiteAnalogique transmetteurAnalogique = new TransmetteurBruiteAnalogique(snrpb, ne, hist);
+        if (seed != null) {
+            transmetteurAnalogique = new TransmetteurBruiteAnalogique(snrpb, ne, hist, seed);
         }
         destination = new DestinationFinale();
 
