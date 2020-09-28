@@ -1,2 +1,2 @@
 #!/bin/bash
-javac ./src/*.java ./src/*/*.java -d ./bin
+javac -cp ./src/junit-4.12.jar:. ./src/*.java ./src/*/*.java -d ./bin
