@@ -1,6 +1,6 @@
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import visualisations.Histogram;
 import visualisations.VueCourbe;
 
@@ -11,8 +11,8 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import static java.lang.Float.parseFloat;
-import static org.junit.jupiter.api.Assertions.*;
-
+import static junit.framework.TestCase.*;
+import static org.junit.Assert.assertNotEquals;
 
 public class SimulateurTest {
 
@@ -26,7 +26,7 @@ public class SimulateurTest {
         logger = Logger.getLogger(String.valueOf(SimulateurTest.class));
     }
 
-    @BeforeEach
+    @Before
     public void setUp() {
         System.setOut(new PrintStream(outputStreamCaptor));
     }
@@ -460,7 +460,7 @@ public class SimulateurTest {
                 "Message défini '1000', 20 ech par bit, format : RZ, snrpb 50 et d'amplitudes min = 0.0 max = 1.0");
         test(new String[]{"-mess", "1000", "-form", "RZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "50"});
         logger.info(outputStreamCaptor.toString().trim());
-        assertEquals(0, getTEB());
+        assertEquals(0.0, getTEB());
         logger.info("Test OK");
     }
 
@@ -516,7 +516,7 @@ public class SimulateurTest {
                 "Message défini '1000', 20 ech par bit, format : NRZ, snrpb 50 et d'amplitudes min = 0.0 max = 1.0");
         test(new String[]{"-mess", "1000", "-form", "NRZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "50"});
         logger.info(outputStreamCaptor.toString().trim());
-        assertEquals(0, getTEB());
+        assertEquals(0.0, getTEB());
         logger.info("Test OK");
     }
 
@@ -573,7 +573,7 @@ public class SimulateurTest {
                 "Message défini '1000', 20 ech par bit, format : NRZT, snrpb 50 et d'amplitudes min = 0.0 max = 1.0");
         test(new String[]{"-mess", "1000", "-form", "NRZT", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "50"});
         logger.info(outputStreamCaptor.toString().trim());
-        assertEquals(0, getTEB());
+        assertEquals(0.0, getTEB());
         logger.info("Test OK");
     }
 }
