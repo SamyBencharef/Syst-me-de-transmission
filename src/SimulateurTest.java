@@ -19,7 +19,7 @@ public class SimulateurTest {
     private static Logger logger;
     private final PrintStream standardOut = System.out;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
-
+    private final String Newligne = System.getProperty("line.separator");
     static {
         System.setProperty("java.util.logging.SimpleFormatter.format",
                 "[%1$tF %1$tT] [%4$-7s] %5$s %n");
@@ -46,10 +46,10 @@ public class SimulateurTest {
     }
 
     // on récupere le TEB avec un bon vieux split et cast des familles
-    private float getTEB() {
+    private double getTEB() {
         String outputFin = outputStreamCaptor.toString().trim();
         String[] splitted = outputFin.split("TEB : ");
-        return parseFloat(splitted[1]);
+        return Double.parseDouble(splitted[1]);
     }
 
     // ------------------------------------------------- TP1 ------------------------------------------------- \\
@@ -61,7 +61,7 @@ public class SimulateurTest {
         logger.info(outputStreamCaptor.toString().trim());
         assertEquals("java  Simulateur  -mess  300  -seed  90  -TP  1    =>   TEB : 0.0",
                 outputStreamCaptor.toString().trim());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class SimulateurTest {
         logger.info(outputStreamCaptor.toString().trim());
         assertEquals("java  Simulateur  -mess  101110011  -TP  1    =>   TEB : 0.0",
                 outputStreamCaptor.toString().trim());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
     // ------------------------------------------------- TP2 ------------------------------------------------- \\
@@ -84,7 +84,7 @@ public class SimulateurTest {
         logger.info(outputStreamCaptor.toString().trim());
         assertEquals("java  Simulateur  -mess  101110011  -form  NRZT  -ampl  -5  5  -nbEch  600  -TP  2    =>   TEB : 0.0",
                 outputStreamCaptor.toString().trim());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class SimulateurTest {
         logger.info(outputStreamCaptor.toString().trim());
         assertEquals("java  Simulateur  -mess  101110011  -form  NRZ  -ampl  -5  5  -nbEch  600  -TP  2    =>   TEB : 0.0",
                 outputStreamCaptor.toString().trim());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class SimulateurTest {
         logger.info(outputStreamCaptor.toString().trim());
         assertEquals("java  Simulateur  -mess  101110011  -form  RZ  -ampl  0  5  -nbEch  600  -TP  2    =>   TEB : 0.0",
                 outputStreamCaptor.toString().trim());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
     // ------------------------------------------------- TP3 ------------------------------------------------- \\
@@ -117,7 +117,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "101110011", "-form", "NRZT", "-ampl", "-5", "5", "-nbEch", "600", "-snrpb", "-5.0", "-TP", "3"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -127,8 +127,8 @@ public class SimulateurTest {
                 "Message défini '101110011', 600 ech par bit, NRZ et d'amplitudes min = -5 max = 5");
         test(new String[]{"-mess", "101110011", "-form", "NRZ", "-ampl", "-5", "5", "-nbEch", "600", "-snrpb", "-5.0", "-TP", "3"});
         logger.info(outputStreamCaptor.toString().trim());
-        assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        assertNotEquals(0.0, getTEB());
+        logger.info("Test OK" + Newligne);
     }
 
     @Test
@@ -137,8 +137,8 @@ public class SimulateurTest {
                 "Message défini '101110011', 600 ech par bit, RZ et d'amplitudes min = -5 max = 5");
         test(new String[]{"-mess", "101110011", "-form", "RZ", "-ampl", "0", "5", "-nbEch", "600", "-snrpb", "-5.0", "-TP", "3"});
         logger.info(outputStreamCaptor.toString().trim());
-        assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        assertNotEquals(0.0, getTEB());
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -166,7 +166,7 @@ public class SimulateurTest {
         if ((time2 - time) > 10000) {
             fail("La performance n'a pas été atteinte.");
         }
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
     // -------- Bon fontionnement du seed ------ \\
@@ -178,17 +178,17 @@ public class SimulateurTest {
 
         test(new String[]{"-mess", "101110011", "-form", "RZ", "-ampl", "0", "5", "-nbEch", "200", "-snrpb", "-5.0", "-seed", "90"});
         logger.info(outputStreamCaptor.toString().trim());
-        float teb1 = getTEB();
+        double teb1 = getTEB();
 
         test(new String[]{"-mess", "101110011", "-form", "RZ", "-ampl", "0", "5", "-nbEch", "200", "-snrpb", "-5.0", "-seed", "90"});
         logger.info(outputStreamCaptor.toString().trim());
         String outputFin = outputStreamCaptor.toString().trim();
         String[] splitted = outputFin.split("TEB : ");
-        float teb2 = parseFloat(splitted[2]);
+        double teb2 = Double.parseDouble(splitted[2]);
 
         assertEquals(teb1, teb2);
 
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
     // -------- Ouverture des graphiques ------ \\
@@ -204,7 +204,7 @@ public class SimulateurTest {
         robot.waitForIdle();
         assertNotNull(VueCourbe.class);
         VueCourbe.kill();
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
     @Test
@@ -219,7 +219,7 @@ public class SimulateurTest {
         robot.waitForIdle();
         assertNotNull(Histogram.class);
         Histogram.kill();
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
     // -------- Verification d'entrées incorrect ------ \\
@@ -236,7 +236,7 @@ public class SimulateurTest {
             logger.info(outputStreamCaptor.toString().trim());
             assertEquals("Valeur du parametre -ampl invalide : -5.0", e.getMessage());
         }
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -254,7 +254,7 @@ public class SimulateurTest {
             logger.info(outputStreamCaptor.toString().trim());
             assertEquals("Valeur du parametre -seed  invalide :wrong", e.getMessage());
         }
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
     @Test
@@ -271,7 +271,7 @@ public class SimulateurTest {
             logger.info(outputStreamCaptor.toString().trim());
             assertEquals("Valeur du parametre -mess invalide : wrong", e.getMessage());
         }
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
     @Test
@@ -288,7 +288,7 @@ public class SimulateurTest {
             logger.info(outputStreamCaptor.toString().trim());
             assertEquals("Valeur du parametre -mess invalide : 00000111a1111", e.getMessage());
         }
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
     @Test
@@ -305,7 +305,7 @@ public class SimulateurTest {
             logger.info(outputStreamCaptor.toString().trim());
             assertEquals("Valeur du parametre -form invalide : wrong", e.getMessage());
         }
-
+        logger.info("Test OK" + Newligne);
     }
 
     @Test
@@ -322,6 +322,7 @@ public class SimulateurTest {
             logger.info(outputStreamCaptor.toString().trim());
             assertEquals("Valeur du parametre -nbEch invalide : wrong", e.getMessage());
         }
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -339,7 +340,7 @@ public class SimulateurTest {
             logger.info(outputStreamCaptor.toString().trim());
             assertEquals("Valeur du parametre -ampl invalide : wrong", e.getMessage());
         }
-        logger.info("Test OK");
+        logger.info("Test OK"  + Newligne);
     }
 
     @Test
@@ -356,7 +357,7 @@ public class SimulateurTest {
             logger.info(outputStreamCaptor.toString().trim());
             assertEquals("Valeur du parametre -ampl invalide : 0", e.getMessage());
         }
-        logger.info("Test OK");
+        logger.info("Test OK"  + Newligne);
     }
 
     @Test
@@ -373,6 +374,7 @@ public class SimulateurTest {
             logger.info(outputStreamCaptor.toString().trim());
             assertEquals("Valeur du parametre -snrpb invalide : wrong", e.getMessage());
         }
+        logger.info("Test OK"  + Newligne);
     }
 
     @Test
@@ -389,6 +391,7 @@ public class SimulateurTest {
             logger.info(outputStreamCaptor.toString().trim());
             assertEquals("Valeur du parametre -TP invalide : wrong", e.getMessage());
         }
+        logger.info("Test OK"  + Newligne);
     }
 
 
@@ -406,6 +409,7 @@ public class SimulateurTest {
             logger.info(outputStreamCaptor.toString().trim());
             assertEquals("Option invalide :-wrong", e.getMessage());
         }
+        logger.info("Test OK"  + Newligne);
     }
 
     // -------- Test de plusieurs valeurs, bon fonctionnement  ------ \\
@@ -417,7 +421,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "RZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "-500"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -428,7 +432,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "RZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "-50"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -439,7 +443,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "RZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "0"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -450,7 +454,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "RZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "7"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -461,7 +465,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "RZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "50"});
         logger.info(outputStreamCaptor.toString().trim());
         assertEquals(0.0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -473,7 +477,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "NRZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "-500"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -484,7 +488,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "NRZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "-50"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -495,7 +499,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "NRZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "0"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -506,7 +510,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "NRZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "7"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -517,7 +521,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "NRZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "50"});
         logger.info(outputStreamCaptor.toString().trim());
         assertEquals(0.0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -530,7 +534,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "NRZT", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "-500"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -541,7 +545,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "NRZT", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "-50"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -552,7 +556,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "NRZT", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "0"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -563,7 +567,7 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "NRZT", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "7"});
         logger.info(outputStreamCaptor.toString().trim());
         assertNotEquals(0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 
 
@@ -574,6 +578,6 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "NRZT", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "50"});
         logger.info(outputStreamCaptor.toString().trim());
         assertEquals(0.0, getTEB());
-        logger.info("Test OK");
+        logger.info("Test OK" + Newligne);
     }
 }
