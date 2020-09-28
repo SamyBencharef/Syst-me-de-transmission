@@ -23,7 +23,7 @@ public class Simulateur {
     /**
      * indique si la version du TP à utiliser
      */
-    private Integer TP = 4;
+    private Integer tp = 4;
     /**
      * indique si le Simulateur utilise des sondes d'affichage
      */
@@ -113,21 +113,21 @@ public class Simulateur {
         analyseArguments(args);
 
         // Run the version of the TP
-        switch (TP) {
+        switch (tp) {
             case 1:
-                TP1();
+                tp1();
                 break;
             case 2:
-                TP2();
+                tp2();
                 break;
             case 3:
-                TP3();
+                tp3();
                 break;
             case 4:
-                TP4();
+                tp4();
                 break;
             default:
-                throw new ArgumentsException("Valeur du parametre -TP invalide : " + TP);
+                throw new ArgumentsException("Valeur du parametre -TP invalide : " + tp);
         }
     }
 
@@ -227,7 +227,7 @@ public class Simulateur {
                 i++;
                 // Treatment
                 if (args[i].matches("[1-4]")) {
-                    TP = Integer.valueOf(args[i]);
+                    tp = Integer.valueOf(args[i]);
                 } else {
                     throw new ArgumentsException("Valeur du parametre -TP invalide : " + args[i]);
                 }
@@ -310,7 +310,7 @@ public class Simulateur {
     /**
      * This method runs the Travail pratique 1
      */
-    private void TP1() {
+    private void tp1() {
         // Instantiations of source, transmitter and destination
         // If the message is random and the seed is given
         if (messageAleatoire && aleatoireAvecGerme) {
@@ -324,6 +324,7 @@ public class Simulateur {
         else {
             source = new SourceFixe(messageString);
         }
+
         transmetteurLogique = new TransmetteurParfaitLogique();
         destination = new DestinationFinale();
 
@@ -343,7 +344,7 @@ public class Simulateur {
     /**
      * This method runs the Travail pratique 2
      */
-    private void TP2() {
+    private void tp2() {
 
         // Instantiations of source, transmitter, recepteur, emetteur and destination
         // If the message is random and the seed is given
@@ -358,8 +359,15 @@ public class Simulateur {
         else {
             source = new SourceFixe(messageString);
         }
+
+        // Reset the ar and dt lists
+        ar.clear();
+        dt.clear();
+        ar.add(0.00f);
+        dt.add(0);
+
         Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
-        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar);
         TransmetteurParfaitAnalogique transmetteurAnalogique = new TransmetteurParfaitAnalogique();
         destination = new DestinationFinale();
 
@@ -385,7 +393,7 @@ public class Simulateur {
     /**
      * This method runs the Travail pratique 3
      */
-    private void TP3() {
+    private void tp3() {
         // Instantiations of source, transmitter, recepteur, emetteur and destination
         // If the message is random and the seed is given
         if (messageAleatoire && aleatoireAvecGerme) {
@@ -399,8 +407,14 @@ public class Simulateur {
         else {
             source = new SourceFixe(messageString);
         }
+        // Reset the ar and dt lists
+        ar.clear();
+        dt.clear();
+        ar.add(0.00f);
+        dt.add(0);
+
         Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
-        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar);
         TransmetteurBruiteAnalogique transmetteurAnalogique = new TransmetteurBruiteAnalogique(snrpb, ne, hist);
         if (seed != null) {
             transmetteurAnalogique =
@@ -430,7 +444,7 @@ public class Simulateur {
     /**
      * This method runs the Travail pratique 4
      */
-    private void TP4() {
+    private void tp4() {
         // Instantiations of source, transmitter, recepteur, emetteur and destination
         // If the message is random and the seed is given
         if (messageAleatoire && aleatoireAvecGerme) {
@@ -445,10 +459,12 @@ public class Simulateur {
             source = new SourceFixe(messageString);
         }
         Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
-        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin);
-        TransmetteurBruiteAnalogique transmetteurAnalogique = new TransmetteurBruiteAnalogique(snrpb, ne, hist);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar);
+        TransmetteurMultiTrajetsBruiteAnalogique transmetteurAnalogique;
         if (seed != null) {
-            transmetteurAnalogique = new TransmetteurBruiteAnalogique(snrpb, ne, hist, seed);
+            transmetteurAnalogique = new TransmetteurMultiTrajetsBruiteAnalogique(ne, snrpb, dt, ar, seed);
+        } else {
+            transmetteurAnalogique = new TransmetteurMultiTrajetsBruiteAnalogique(ne, snrpb, dt, ar);
         }
         destination = new DestinationFinale();
 

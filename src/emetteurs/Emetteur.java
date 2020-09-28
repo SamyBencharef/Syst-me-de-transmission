@@ -161,5 +161,4 @@ public class Emetteur extends Transmetteur<Boolean, Float> {
         return newInformation;
 
     }
-
 }
