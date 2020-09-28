@@ -148,8 +148,8 @@ public class SimulateurTest {
     public void testTPs_Performance() throws Exception {
 
         logger.info("All TP's, Performance n°1 : " +
-                "Vérifier la performance (délai -30 secondes). " +
-                "Message défini '101110011', 200 ech par bit, RZ et d'amplitudes min = -5 max = 5");
+                "Vérifier la performance (délai -10 secondes). " +
+                "Message défini '100000', 200 ech par bit, RZ et d'amplitudes min = 0 max = 5");
 
         Date date = new Date();
         long time = date.getTime();
