@@ -67,7 +67,7 @@ public class Simulateur {
     /**
      * la valeur du rapport signal sur bruit par bit (en dB) TP 3
      */
-    private Float snrpb = 0.00f;
+    private Float snrpb = null;
     /**
      * indique si la densité de probabilité du bruit doit être affichée TP 3
      */

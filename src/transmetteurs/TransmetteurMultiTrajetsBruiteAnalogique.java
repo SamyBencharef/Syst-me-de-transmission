@@ -136,21 +136,25 @@ public class TransmetteurMultiTrajetsBruiteAnalogique extends Transmetteur<Float
      */
     private Information<Float> addNoise(Information<Float> information) {
         Information<Float> noisyInformation = new Information<>();
-        ArrayList<Float> arrayNoise = new ArrayList<>();
-        Random ran = new Random();
-        if (seed != null) {
-            ran = new Random(seed);
+        if (snrpb != null) {
+            ArrayList<Float> arrayNoise = new ArrayList<>();
+            Random ran = new Random();
+            if (seed != null) {
+                ran = new Random(seed);
+            }
+            float standardDeviation = (float) Math.sqrt((getSignalPower(information) * nbEchTpsBit) / (2 * Math.pow(10,
+                    snrpb / 10)));
+            // Mix the noise and information
+            for (int i = 0; i < information.nbElements(); i++) {
+                float noise =
+                        (float) (standardDeviation * Math.sqrt(-2 * Math.log(1 - ran.nextFloat())) * Math.cos(2 * Math.PI * ran.nextFloat()));
+                arrayNoise.add(noise);
+                noisyInformation.add(noise + information.iemeElement(i));
+            }
+            if (histogram) showNoise(arrayNoise);
+        } else {
+            noisyInformation = information;
         }
-        float standardDeviation = (float) Math.sqrt((getSignalPower(information) * nbEchTpsBit) / (2 * Math.pow(10,
-                snrpb / 10)));
-        // Mix the noise and information
-        for (int i = 0; i < information.nbElements(); i++) {
-            float noise =
-                    (float) (standardDeviation * Math.sqrt(-2 * Math.log(1 - ran.nextFloat())) * Math.cos(2 * Math.PI * ran.nextFloat()));
-            arrayNoise.add(noise);
-            noisyInformation.add(noise + information.iemeElement(i));
-        }
-        if (histogram) showNoise(arrayNoise);
         return noisyInformation;
     }
 

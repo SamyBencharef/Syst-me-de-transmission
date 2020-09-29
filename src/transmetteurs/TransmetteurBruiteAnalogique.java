@@ -78,23 +78,28 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
      */
     private Information<Float> addNoise(Information<Float> information) {
         Information<Float> noisyInformation = new Information<>();
-        ArrayList<Float> arrayNoise = new ArrayList<>();
-        Random ran = new Random();
-        if (seed != null) {
-            ran = new Random(seed);
+        if(snrpb!=null) {
+            ArrayList<Float> arrayNoise = new ArrayList<>();
+            Random ran = new Random();
+            if (seed != null) {
+                ran = new Random(seed);
+            }
+            float standardDeviation = (float) Math.sqrt((getSignalPower(information) * nbEchTpsBit) / (2 * Math.pow(10,
+                    snrpb / 10)));
+            System.out.println("standardDeviation : " + standardDeviation);
+            // Mix the noise and information
+            for (int i = 0; i < information.nbElements(); i++) {
+                float noise =
+                        (float) (standardDeviation * Math.sqrt(-2 * Math.log(1 - ran.nextFloat())) * Math.cos(2 * Math.PI * ran.nextFloat()));
+                arrayNoise.add(noise);
+                noisyInformation.add(noise + information.iemeElement(i));
+            }
+            // Display the gaussian noise as a density probability
+            if (histogram) showNoise(arrayNoise);
         }
-        float standardDeviation = (float) Math.sqrt((getSignalPower(information) * nbEchTpsBit) / (2 * Math.pow(10,
-                snrpb / 10)));
-        System.out.println("standardDeviation : " + standardDeviation);
-        // Mix the noise and information
-        for (int i = 0; i < information.nbElements(); i++) {
-            float noise =
-                    (float) (standardDeviation * Math.sqrt(-2 * Math.log(1 - ran.nextFloat())) * Math.cos(2 * Math.PI * ran.nextFloat()));
-            arrayNoise.add(noise);
-            noisyInformation.add(noise + information.iemeElement(i));
+        else{
+            noisyInformation = information;
         }
-        // Display the gaussian noise as a density probability
-        if (histogram) showNoise(arrayNoise);
         return noisyInformation;
     }
 
