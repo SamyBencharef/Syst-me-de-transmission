@@ -85,6 +85,7 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
         }
         float standardDeviation = (float) Math.sqrt((getSignalPower(information) * nbEchTpsBit) / (2 * Math.pow(10,
                 snrpb / 10)));
+        System.out.println("standardDeviation : " + standardDeviation);
         // Mix the noise and information
         for (int i = 0; i < information.nbElements(); i++) {
             float noise =
@@ -111,6 +112,7 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
             }
             signalPower = signalPower / information.nbElements();
         }
+        System.out.println("signalPower : " + signalPower);
         return signalPower;
     }
 

@@ -3,6 +3,7 @@ package transmetteurs;
 import destinations.DestinationInterface;
 import information.Information;
 import information.InformationNonConforme;
+import visualisations.Histogram;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +22,7 @@ public class TransmetteurMultiTrajetsBruiteAnalogique extends Transmetteur<Float
     private final ArrayList<Float> ar;
     private final Integer seed;
     private final Integer nbEchTpsBit;
+    private final boolean histogram;
     private final Float snrpb;
 
     /**
@@ -29,15 +31,17 @@ public class TransmetteurMultiTrajetsBruiteAnalogique extends Transmetteur<Float
      * @param snrpb       (Float) SNRPB of the signal
      * @param nbEchTpsBit (Integer) NNumber of samples for one bit
      * @param dt          (ArrayList<Integer>) Delay of the indirect Signals
+     * @param hist        (boolean) Display or not the Gaussian noise
      * @param ar          (ArrayList<Float>) Attenuation of the indirect Signals amplitude
      */
     public TransmetteurMultiTrajetsBruiteAnalogique(Integer nbEchTpsBit, Float snrpb, ArrayList<Integer> dt,
-                                                    ArrayList<Float> ar) {
+                                                    ArrayList<Float> ar, boolean hist) {
         super();
         this.nbEchTpsBit = nbEchTpsBit;
         this.snrpb = snrpb;
         this.dt = (ArrayList<Integer>) dt.clone();
         this.ar = (ArrayList<Float>) ar.clone();
+        this.histogram = hist;
         this.seed = null;
     }
 
@@ -48,15 +52,17 @@ public class TransmetteurMultiTrajetsBruiteAnalogique extends Transmetteur<Float
      * @param nbEchTpsBit (Integer) NNumber of samples for one bit
      * @param dt          (ArrayList<Integer>) Delay of the indirect Signals
      * @param ar          (ArrayList<Float>) Attenuation of the indirect Signals amplitude
+     * @param hist        (boolean) Display or not the Gaussian noise
      * @param seed        (int) Set the seed for the random
      */
     public TransmetteurMultiTrajetsBruiteAnalogique(Integer nbEchTpsBit, Float snrpb, ArrayList<Integer> dt,
-                                                    ArrayList<Float> ar, int seed) {
+                                                    ArrayList<Float> ar, int seed, boolean hist) {
         super();
         this.nbEchTpsBit = nbEchTpsBit;
         this.snrpb = snrpb;
         this.dt = (ArrayList<Integer>) dt.clone();
         this.ar = (ArrayList<Float>) ar.clone();
+        this.histogram = hist;
         this.seed = seed;
     }
 
@@ -144,6 +150,7 @@ public class TransmetteurMultiTrajetsBruiteAnalogique extends Transmetteur<Float
             arrayNoise.add(noise);
             noisyInformation.add(noise + information.iemeElement(i));
         }
+        if (histogram) showNoise(arrayNoise);
         return noisyInformation;
     }
 
@@ -162,5 +169,21 @@ public class TransmetteurMultiTrajetsBruiteAnalogique extends Transmetteur<Float
             signalPower = signalPower / information.nbElements();
         }
         return signalPower;
+    }
+
+    /**
+     * Displays the gaussian noise as a density probability
+     *
+     * @param noise (ArrayList<Float) noise
+     */
+    private void showNoise(ArrayList<Float> noise) {
+        // Format the value to x.xx
+        for (int i = 0; i < noise.size(); i++) {
+            noise.set(i, (float) (Math.floor(noise.get(i) * 100) / 100));
+        }
+        // Sort the values
+        Collections.sort(noise);
+        // Display
+        new Histogram(noise, "Noise");
     }
 }
