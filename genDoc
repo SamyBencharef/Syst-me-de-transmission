@@ -1,2 +1,2 @@
 #!/bin/bash
-javadoc -encoding ISO-8859-1 ./src/*.java ./src/*/*.java -d ./docs/
+javadoc -cp ./src/junit-4.12.jar:. -encoding ISO-8859-1 ./src/*.java ./src/*/*.java -d ./docs/

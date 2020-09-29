@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.Random;
 
 /**
- * Class that defines a imperfect analogical transmitter (receive and send the same message wihout adding noise). The
+ * Class that defines a imperfect analogical transmitter (receive and send the same message bu adding noise). The
  * noise generated is gaussian. The input type is a Float and the output type is a Float. The class implements the class
  * Transmetteur.
  *
@@ -21,12 +21,37 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
     private final Float snrpb;
     private final Integer nbEchTpsBit;
     private final boolean histogram;
+    private final Integer seed;
 
+    /**
+     * The constructor sets the attributes of the class TransmetteurBruiteAnalogique.
+     *
+     * @param snrpb       (Float) SNRPB of the signal
+     * @param nbEchTpsBit (Integer) NNumber of samples for one bit
+     * @param hist        (boolean) Display or not the Gaussian noise
+     */
     public TransmetteurBruiteAnalogique(Float snrpb, Integer nbEchTpsBit, boolean hist) {
         super();
         this.snrpb = snrpb;
         this.nbEchTpsBit = nbEchTpsBit;
         this.histogram = hist;
+        this.seed = null;
+    }
+
+    /**
+     * The constructor sets the attributes of the class TransmetteurBruiteAnalogique.
+     *
+     * @param snrpb       (Float) SNRPB of the signal
+     * @param nbEchTpsBit (Integer) NNumber of samples for one bit
+     * @param hist        (boolean) Display or not the Gaussian noise
+     * @param seed        (int) Value of the seed to generate random noise
+     */
+    public TransmetteurBruiteAnalogique(Float snrpb, Integer nbEchTpsBit, boolean hist, int seed) {
+        super();
+        this.snrpb = snrpb;
+        this.nbEchTpsBit = nbEchTpsBit;
+        this.histogram = hist;
+        this.seed = seed;
     }
 
     @Override
@@ -49,14 +74,18 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
      * Adds a gaussian noise in the information
      *
      * @param information (Information<Float>) Initial information
-     * @return noisy information
+     * @return noisy information.
      */
     private Information<Float> addNoise(Information<Float> information) {
         Information<Float> noisyInformation = new Information<>();
-        ArrayList<Float> arrayNoise = new ArrayList();
+        ArrayList<Float> arrayNoise = new ArrayList<>();
         Random ran = new Random();
+        if (seed != null) {
+            ran = new Random(seed);
+        }
         float standardDeviation = (float) Math.sqrt((getSignalPower(information) * nbEchTpsBit) / (2 * Math.pow(10,
                 snrpb / 10)));
+        System.out.println("standardDeviation : " + standardDeviation);
         // Mix the noise and information
         for (int i = 0; i < information.nbElements(); i++) {
             float noise =
@@ -83,6 +112,7 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
             }
             signalPower = signalPower / information.nbElements();
         }
+        System.out.println("signalPower : " + signalPower);
         return signalPower;
     }
 

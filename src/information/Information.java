@@ -61,6 +61,26 @@ public class Information<T> implements Iterable<T> {
     }
 
     /**
+     * pour ajouter un élément ࠵n endroit de l'information
+     *
+     * @param valeur l'élément à rajouter
+     * @param index  l'endroit ou ajouter l'鬩ment
+     */
+    public void add(Integer index, T valeur) {
+        this.content.add(index, valeur);
+    }
+
+    /**
+     * pour modifier un élément ࠵n endroit de l'information
+     *
+     * @param valeur l'élément à modifier
+     * @param index  l'endroit ou modifier l'鬩ment
+     */
+    public void set(Integer index, T valeur) {
+        this.content.set(index, valeur);
+    }
+
+    /**
      * Add an element n times at the end of the information
      *
      * @param value  Element to add
@@ -79,6 +99,14 @@ public class Information<T> implements Iterable<T> {
         this.content.remove(number);
     }
 
+    /**
+     * Modify the content
+     *
+     * @param newContent new content
+     */
+    public void setContent(ArrayList<T> newContent) {
+        this.content = (ArrayList<T>) newContent.clone();
+    }
 
     /**
      * pour comparer l'information courante avec une autre information
@@ -119,5 +147,13 @@ public class Information<T> implements Iterable<T> {
      */
     public Iterator<T> iterator() {
         return content.iterator();
+    }
+
+
+    /**
+     * Getter for content
+     */
+    public ArrayList<T> getContent() {
+        return content;
     }
 }
