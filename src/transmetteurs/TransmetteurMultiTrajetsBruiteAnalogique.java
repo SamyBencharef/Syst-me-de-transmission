@@ -141,7 +141,7 @@ public class TransmetteurMultiTrajetsBruiteAnalogique extends Transmetteur<Float
         if (seed != null) {
             ran = new Random(seed);
         }
-        float standardDeviation = (float) Math.sqrt((getSignalPower(information) * nbEchTpsBit) / (2 * Math.pow(10,
+        float standardDeviation = (float) Math.sqrt((getSignalPower(information)) / (2 * Math.pow(10,
                 snrpb / 10)));
         // Mix the noise and information
         for (int i = 0; i < information.nbElements(); i++) {
