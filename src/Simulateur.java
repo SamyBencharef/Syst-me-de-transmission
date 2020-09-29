@@ -462,9 +462,9 @@ public class Simulateur {
         Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar);
         TransmetteurMultiTrajetsBruiteAnalogique transmetteurAnalogique;
         if (seed != null) {
-            transmetteurAnalogique = new TransmetteurMultiTrajetsBruiteAnalogique(ne, snrpb, dt, ar, seed);
+            transmetteurAnalogique = new TransmetteurMultiTrajetsBruiteAnalogique(ne, snrpb, dt, ar, seed, hist);
         } else {
-            transmetteurAnalogique = new TransmetteurMultiTrajetsBruiteAnalogique(ne, snrpb, dt, ar);
+            transmetteurAnalogique = new TransmetteurMultiTrajetsBruiteAnalogique(ne, snrpb, dt, ar, hist);
         }
         destination = new DestinationFinale();
 
