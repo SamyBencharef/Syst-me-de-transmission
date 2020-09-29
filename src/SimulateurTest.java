@@ -213,7 +213,8 @@ public class SimulateurTest {
                 "Vérifier le bon fonctionnement de l'affichage des graphiques" +
                 "Message défini '101110011', 40 ech par bit, RZ, seed 90, -hist et d'amplitudes min = -5 max = 5");
 
-        test(new String[]{"-mess", "101110011", "-form", "RZ", "-ampl", "0", "5", "-nbEch", "5", "-snrpb", "-5.0", "-hist"});
+        test(new String[]{"-mess", "101110011", "-form", "RZ", "-ampl", "0", "5", "-nbEch",
+                "5", "-snrpb", "-5.0", "-hist"});
         logger.info(outputStreamCaptor.toString().trim());
         Robot robot = new Robot();
         robot.waitForIdle();
@@ -412,6 +413,67 @@ public class SimulateurTest {
         logger.info("Test OK"  + Newligne);
     }
 
+
+    @Test
+    public void testTPs_EntreeIncorrect_Multiple() throws Exception {
+        logger.info("All TP's, entrée incorrect n°11 : " +
+                "Vérifier l'entrée d'un chemin multiple incorrect. " +
+                "Message défini '101110011', 200 ech par bit, format : RZ, seed 90, snrpb wrong, " +
+                "première entrée égale à 0 et d'amplitudes min = 0 max = 5");
+
+        try {
+            test(new String[]{"-mess", "101110011", "-form", "RZ", "-ampl", "0", "5", "-nbEch", "200",
+                    "-snrpb", "-5.0", "-seed", "90", "-ti", "0", "0.0"});
+            logger.info(outputStreamCaptor.toString().trim());
+            fail("The exception haven't been thrown");
+        } catch (ArgumentsException e) {
+            logger.info(outputStreamCaptor.toString().trim());
+            assertEquals("Valeur du parametre -ti invalide : 0", e.getMessage());
+        }
+        logger.info("Test OK"  + Newligne);
+    }
+
+    @Test
+    public void testTPs_EntreeIncorrect_Multiple2() throws Exception {
+        logger.info("All TP's, entrée incorrect n°12 : " +
+                "Vérifier l'entrée d'un chemin multiple incorrect 2. " +
+                "Message défini '101110011', 200 ech par bit, format : RZ, seed 90, snrpb wrong, " +
+                "seconde entré négative et d'amplitudes min = 0 max = 5");
+
+        try {
+            test(new String[]{"-mess", "101110011", "-form", "RZ", "-ampl", "0", "5", "-nbEch", "200",
+                    "-snrpb", "-5.0", "-seed", "90", "-ti", "1", "-1" });
+            logger.info(outputStreamCaptor.toString().trim());
+            fail("The exception haven't been thrown");
+        } catch (ArgumentsException e) {
+            logger.info(outputStreamCaptor.toString().trim());
+            assertEquals("Valeur du parametre -ti invalide : -1", e.getMessage());
+        }
+        logger.info("Test OK"  + Newligne);
+    }
+
+
+    @Test
+    public void testTPs_EntreeIncorrect_Multiple3() throws Exception {
+        logger.info("All TP's, entrée incorrect n°13 : " +
+                "Vérifier l'entrée d'un chemin multiple incorrect 3. " +
+                "Message défini '101110011', 200 ech par bit, format : RZ, seed 90, snrpb wrong, " +
+                " 6 multitrajetes et d'amplitudes min = 0 max = 5");
+
+        try {
+            test(new String[]{"-mess", "101110011", "-form", "RZ", "-ampl", "0", "5", "-nbEch", "200",
+                    "-snrpb", "-5.0", "-seed", "90", "-ti", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1",
+                    "1", "1"});
+            logger.info(outputStreamCaptor.toString().trim());
+            fail("The exception haven't been thrown");
+        } catch (ArgumentsException e) {
+            logger.info(outputStreamCaptor.toString().trim());
+            assertEquals("Option invalide :1", e.getMessage());
+        }
+        logger.info("Test OK"  + Newligne);
+    }
+
+
     // -------- Test de plusieurs valeurs, bon fonctionnement  ------ \\
     // -------- RZ ------ \\
     @Test
@@ -578,6 +640,126 @@ public class SimulateurTest {
         test(new String[]{"-mess", "1000", "-form", "NRZT", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "50"});
         logger.info(outputStreamCaptor.toString().trim());
         assertEquals(0.0, getTEB());
+        logger.info("Test OK" + Newligne);
+    }
+
+
+    // -------- Multitrajet ------ \\
+    @Test
+    public void testTPs_PlusieursEntree_MultiTrajet_50_03_NRZT() throws Exception {
+        logger.info("All TP's, plusieurs entrée multitrajet avec format NRZT : " +
+                "Message défini '1000', 20 ech par bit, format : NRZT, snrpb 50,mutlitrajet en 50 et 0.3" +
+                " et d'amplitudes min = 0.0 max = 1.0");
+        test(new String[]{"-mess", "1000", "-form", "NRZT", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "7",
+                            "-ti", "50", "0.3"});
+
+        logger.info(outputStreamCaptor.toString().trim());
+        assertNotEquals(0.0, getTEB());
+        logger.info("Test OK" + Newligne);
+    }
+
+    @Test
+    public void testTPs_PlusieursEntree_MultiTrajet_1_09_NRZT() throws Exception {
+        logger.info("All TP's, plusieurs entrée multitrajet avec format NRZT : " +
+                "Message défini '1000', 20 ech par bit, format : NRZT, snrpb 50,mutlitrajet en 1 et 0.9" +
+                " et d'amplitudes min = 0.0 max = 1.0");
+        test(new String[]{"-mess", "1000", "-form", "NRZT", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "7",
+                "-ti", "1", "0.9"});
+
+        logger.info(outputStreamCaptor.toString().trim());
+        assertNotEquals(0.0, getTEB());
+        logger.info("Test OK" + Newligne);
+    }
+
+    @Test
+    public void testTPs_PlusieursEntree_MultiTrajet_90_001_NRZT() throws Exception {
+        logger.info("All TP's, plusieurs entrée multitrajet avec format NRZT : " +
+                "Message défini '1000', 20 ech par bit, format : NRZT, snrpb 50,mutlitrajet en 90 et 0.01" +
+                " et d'amplitudes min = 0.0 max = 1.0");
+        test(new String[]{"-mess", "1000", "-form", "NRZT", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "7",
+                "-ti", "90", "0.01"});
+
+        logger.info(outputStreamCaptor.toString().trim());
+        assertNotEquals(0.0, getTEB());
+        logger.info("Test OK" + Newligne);
+    }
+
+    @Test
+    public void testTPs_PlusieursEntree_MultiTrajet_50_03_NRZ() throws Exception {
+        logger.info("All TP's, plusieurs entrée multitrajet avec format NRZ : " +
+                "Message défini '1000', 20 ech par bit, format : NRZ, snrpb 50,mutlitrajet en 50 et 0.3" +
+                " et d'amplitudes min = 0.0 max = 1.0");
+        test(new String[]{"-mess", "1000", "-form", "NRZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "7",
+                "-ti", "50", "0.3"});
+
+        logger.info(outputStreamCaptor.toString().trim());
+        assertNotEquals(0.0, getTEB());
+        logger.info("Test OK" + Newligne);
+    }
+
+    @Test
+    public void testTPs_PlusieursEntree_MultiTrajet_1_09_NRZ() throws Exception {
+        logger.info("All TP's, plusieurs entrée multitrajet avec format NRZ : " +
+                "Message défini '1000', 20 ech par bit, format : NRZ, snrpb 50,mutlitrajet en 1 et 0.9" +
+                " et d'amplitudes min = 0.0 max = 1.0");
+        test(new String[]{"-mess", "1000", "-form", "NRZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "7",
+                "-ti", "1", "0.9"});
+
+        logger.info(outputStreamCaptor.toString().trim());
+        assertNotEquals(0.0, getTEB());
+        logger.info("Test OK" + Newligne);
+    }
+
+    @Test
+    public void testTPs_PlusieursEntree_MultiTrajet_90_001_NRZ() throws Exception {
+        logger.info("All TP's, plusieurs entrée multitrajet avec format NRZ : " +
+                "Message défini '1000', 20 ech par bit, format : NRZ, snrpb 50,mutlitrajet en 90 et 0.01" +
+                " et d'amplitudes min = 0.0 max = 1.0");
+        test(new String[]{"-mess", "1000", "-form", "NRZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "7",
+                "-ti", "90", "0.01"});
+
+        logger.info(outputStreamCaptor.toString().trim());
+        assertNotEquals(0.0, getTEB());
+        logger.info("Test OK" + Newligne);
+    }
+
+
+    @Test
+    public void testTPs_PlusieursEntree_MultiTrajet_50_03_RZ() throws Exception {
+        logger.info("All TP's, plusieurs entrée multitrajet avec format RZ : " +
+                "Message défini '1000', 20 ech par bit, format : RZ, snrpb 50,mutlitrajet en 50 et 0.3" +
+                " et d'amplitudes min = 0.0 max = 1.0");
+        test(new String[]{"-mess", "1000", "-form", "RZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "7",
+                "-ti", "50", "0.3"});
+
+        logger.info(outputStreamCaptor.toString().trim());
+        assertNotEquals(0.0, getTEB());
+        logger.info("Test OK" + Newligne);
+    }
+
+    @Test
+    public void testTPs_PlusieursEntree_MultiTrajet_1_09_RZ() throws Exception {
+        logger.info("All TP's, plusieurs entrée multitrajet avec format RZ : " +
+                "Message défini '1000', 20 ech par bit, format : RZ, snrpb 50,mutlitrajet en 1 et 0.9" +
+                " et d'amplitudes min = 0.0 max = 1.0");
+        test(new String[]{"-mess", "1000", "-form", "RZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "7",
+                "-ti", "1", "0.9"});
+
+        logger.info(outputStreamCaptor.toString().trim());
+        assertNotEquals(0.0, getTEB());
+        logger.info("Test OK" + Newligne);
+    }
+
+    @Test
+    public void testTPs_PlusieursEntree_MultiTrajet_90_001_RZ() throws Exception {
+        logger.info("All TP's, plusieurs entrée multitrajet avec format RZ : " +
+                "Message défini '1000', 20 ech par bit, format : RZ, snrpb 50,mutlitrajet en 90 et 0.01" +
+                " et d'amplitudes min = 0.0 max = 1.0");
+        test(new String[]{"-mess", "1000", "-form", "RZ", "-ampl", "0.0", "1.0", "-nbEch", "10", "-snrpb", "7",
+                "-ti", "90", "0.01"});
+
+        logger.info(outputStreamCaptor.toString().trim());
+        assertNotEquals(0.0, getTEB());
         logger.info("Test OK" + Newligne);
     }
 }
