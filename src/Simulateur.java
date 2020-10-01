@@ -1,6 +1,7 @@
+import codeur.Codeur;
+import decodeur.Decodeur;
 import emetteurs.Emetteur;
 import information.Information;
-import information.InformationNonConforme;
 import recepteurs.Recepteur;
 import sources.*;
 import destinations.*;
@@ -23,7 +24,7 @@ public class Simulateur {
     /**
      * indique si la version du TP à utiliser
      */
-    private Integer tp = 4;
+    private Integer tp = 5;
     /**
      * indique si le Simulateur utilise des sondes d'affichage
      */
@@ -80,6 +81,10 @@ public class Simulateur {
      * La valeur de l'amplitude relative du signal de trajet indirect par rapport au trajet direct TP 4
      */
     private ArrayList<Float> ar = new ArrayList<>();
+    /**
+     * La valeur de l'amplitude relative du signal de trajet indirect par rapport au trajet direct TP 5
+     */
+    private Boolean codeur = false;
 
 
     /**
@@ -125,6 +130,9 @@ public class Simulateur {
                 break;
             case 4:
                 tp4();
+                break;
+            case 5:
+                tp5();
                 break;
             default:
                 throw new ArgumentsException("Valeur du parametre -TP invalide : " + tp);
@@ -226,7 +234,7 @@ public class Simulateur {
             } else if (args[i].matches("-TP")) {
                 i++;
                 // Treatment
-                if (args[i].matches("[1-4]")) {
+                if (args[i].matches("[1-5]")) {
                     tp = Integer.valueOf(args[i]);
                 } else {
                     throw new ArgumentsException("Valeur du parametre -TP invalide : " + args[i]);
@@ -249,6 +257,8 @@ public class Simulateur {
                     }
                     limit++;
                 }
+            } else if (args[i].matches("-codeur")) {
+                codeur = true;
             } else {
                 throw new ArgumentsException("Option invalide :" + args[i]);
             }
@@ -292,12 +302,12 @@ public class Simulateur {
         Information<Boolean> receivedMessage = destination.getInformationRecue();
 
         // Throws an Exception if the messages don't have the same length
-        if ((source.getInformationEmise().nbElements() != nbBitsMess) || (destination.getInformationRecue().nbElements() != nbBitsMess)) {
+        if ((sendMessage.nbElements() != nbBitsMess) || (receivedMessage.nbElements() != nbBitsMess)) {
             throw new IllegalArgumentException("The length of the send message isn't equal to the received one");
         }
 
         int bitError = 0;
-        int nbBits = source.getInformationEmise().nbElements();
+        int nbBits = receivedMessage.nbElements();
 
         // Compare char per char
         for (int i = 0; i < nbBits; i++) {
@@ -484,6 +494,66 @@ public class Simulateur {
             emetteur.connecter(sonde2);
             transmetteurAnalogique.connecter(sonde3);
             recepteur.connecter(sonde4);
+        }
+    }
+
+    /**
+     * This method runs the Travail pratique 5
+     */
+    private void tp5() {
+        // Instantiations of source, transmitter, recepteur, emetteur and destination
+        // If the message is random and the seed is given
+        if (messageAleatoire && aleatoireAvecGerme) {
+            source = new SourceAleatoire(nbBitsMess, seed);
+        }
+        // If the message is random
+        else if (messageAleatoire) {
+            source = new SourceAleatoire(nbBitsMess);
+        }
+        // If the message was given by the user
+        else {
+            source = new SourceFixe(messageString);
+        }
+        Codeur encoder = new Codeur();
+        Decodeur decoder = new Decodeur();
+        Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar);
+        TransmetteurMultiTrajetsBruiteAnalogique transmetteurAnalogique;
+        if (seed != null) {
+            transmetteurAnalogique = new TransmetteurMultiTrajetsBruiteAnalogique(ne, snrpb, dt, ar, seed, hist);
+        } else {
+            transmetteurAnalogique = new TransmetteurMultiTrajetsBruiteAnalogique(ne, snrpb, dt, ar, hist);
+        }
+        destination = new DestinationFinale();
+
+        // Connections between components
+        // If the encoder and the decoder are used
+        if (codeur) {
+            source.connecter(encoder);
+            encoder.connecter(emetteur);
+            recepteur.connecter(decoder);
+            decoder.connecter(destination);
+        } else {
+            source.connecter(emetteur);
+            recepteur.connecter(destination);
+        }
+        emetteur.connecter(transmetteurAnalogique);
+        transmetteurAnalogique.connecter(recepteur);
+
+        // Display graphics
+        if (affichage) {
+            SondeLogique sonde1 = new SondeLogique("SEND MESSAGE LOGICAL", 100);
+            SondeAnalogique sonde2 = new SondeAnalogique("SEND MESSAGE ANALOGICAL");
+            SondeAnalogique sonde3 = new SondeAnalogique("RECEIVED MESSAGE ANALOGICAL");
+            SondeLogique sonde4 = new SondeLogique("RECEVEID MESSAGE LOGICAL", 100);
+            source.connecter(sonde1);
+            emetteur.connecter(sonde2);
+            transmetteurAnalogique.connecter(sonde3);
+            if (codeur) {
+                decoder.connecter(sonde4);
+            } else {
+                recepteur.connecter(sonde4);
+            }
         }
     }
 

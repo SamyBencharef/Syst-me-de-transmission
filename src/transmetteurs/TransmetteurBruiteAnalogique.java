@@ -10,8 +10,8 @@ import java.util.Collections;
 import java.util.Random;
 
 /**
- * Class that defines a imperfect analogical transmitter (receive and send the same message bu adding noise). The
- * noise generated is gaussian. The input type is a Float and the output type is a Float. The class implements the class
+ * Class that defines a imperfect analogical transmitter (receive and send the same message bu adding noise). The noise
+ * generated is gaussian. The input type is a Float and the output type is a Float. The class implements the class
  * Transmetteur.
  *
  * @author Thierry JIAO - Samy BENCHAREF - Thanh Huy LE - Milo THIBAUD - Lucas BERENGUER
@@ -78,7 +78,7 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
      */
     private Information<Float> addNoise(Information<Float> information) {
         Information<Float> noisyInformation = new Information<>();
-        if(snrpb!=null) {
+        if (snrpb != null) {
             ArrayList<Float> arrayNoise = new ArrayList<>();
             Random ran = new Random();
             if (seed != null) {
@@ -86,7 +86,6 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
             }
             float standardDeviation = (float) Math.sqrt((getSignalPower(information) * nbEchTpsBit) / (2 * Math.pow(10,
                     snrpb / 10)));
-            System.out.println("standardDeviation : " + standardDeviation);
             // Mix the noise and information
             for (int i = 0; i < information.nbElements(); i++) {
                 float noise =
@@ -96,8 +95,13 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
             }
             // Display the gaussian noise as a density probability
             if (histogram) showNoise(arrayNoise);
-        }
-        else{
+            float noise = 0f;
+            for (Float aFloat : arrayNoise) {
+                noise += Math.pow(aFloat, 2);
+            }
+            noise = noise / arrayNoise.size();
+            System.out.println("Calculated snrpb " + 10 * Math.log10((getSignalPower(information) * nbEchTpsBit) / (2 * noise)));
+        } else {
             noisyInformation = information;
         }
         return noisyInformation;
@@ -117,7 +121,6 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
             }
             signalPower = signalPower / information.nbElements();
         }
-        System.out.println("signalPower : " + signalPower);
         return signalPower;
     }
 

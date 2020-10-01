@@ -152,6 +152,12 @@ public class TransmetteurMultiTrajetsBruiteAnalogique extends Transmetteur<Float
                 noisyInformation.add(noise + information.iemeElement(i));
             }
             if (histogram) showNoise(arrayNoise);
+            float noise = 0f;
+            for (Float aFloat : arrayNoise) {
+                noise += Math.pow(aFloat, 2);
+            }
+            noise = noise / arrayNoise.size();
+            System.out.println("Calculated snrpb " + 10 * Math.log10((getSignalPower(information) * nbEchTpsBit) / (2 * noise)));
         } else {
             noisyInformation = information;
         }
