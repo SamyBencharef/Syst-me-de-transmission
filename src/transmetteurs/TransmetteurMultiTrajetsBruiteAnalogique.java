@@ -89,7 +89,7 @@ public class TransmetteurMultiTrajetsBruiteAnalogique extends Transmetteur<Float
     /**
      * Adds multi-paths to a signal.
      *
-     * @param signal (Information<Float>) Origginal signal
+     * @param signal (Information<Float>) Original signal
      * @param dt     (ArrayList<Integer>) List containing the delays of the indirect signals
      * @param ar     (ArrayList<Float>) List containing the amplitude of the indirect signals
      */
@@ -129,10 +129,10 @@ public class TransmetteurMultiTrajetsBruiteAnalogique extends Transmetteur<Float
     }
 
     /**
-     * Adds a gaussian noise in the information
+     * Adds a gaussian noise in the information.
      *
      * @param information (Information<Float>) Initial information
-     * @return noisy information.
+     * @return noisy information
      */
     private Information<Float> addNoise(Information<Float> information) {
         Information<Float> noisyInformation = new Information<>();
@@ -185,7 +185,7 @@ public class TransmetteurMultiTrajetsBruiteAnalogique extends Transmetteur<Float
     }
 
     /**
-     * Displays the gaussian noise as a density probability
+     * Displays the gaussian noise as a density of probability.
      *
      * @param noise (ArrayList<Float) noise
      */
