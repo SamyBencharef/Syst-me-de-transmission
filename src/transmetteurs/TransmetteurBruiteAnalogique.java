@@ -100,6 +100,9 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
                 noise += Math.pow(aFloat, 2);
             }
             noise = noise / arrayNoise.size();
+            System.out.println("PuissanceBruit : " + noise);
+            System.out.println("PuissanceSignal : " + (getSignalPower(information)));
+            System.out.println("nbEchTpsBit : " + nbEchTpsBit);
             System.out.println("Calculated snrpb " + 10 * Math.log10((getSignalPower(information) * nbEchTpsBit) / (2 * noise)));
         } else {
             noisyInformation = information;
