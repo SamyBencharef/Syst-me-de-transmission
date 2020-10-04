@@ -24,20 +24,22 @@ public class Recepteur extends Transmetteur<Float, Boolean> {
     private final Integer nbEchTpsBit;
     private final ArrayList<Integer> dt;
     private final ArrayList<Float> ar;
+    private final Boolean fixMultiPaths;
     private int nbElements;
 
     /**
      * The constructor sets the attributes in order to convert the information.
      *
-     * @param codetype    (String) code type of the received information
-     * @param nbEchTpsBit (Integer) number of samples per bit
-     * @param ampliMax    (Float) Value max of the amplitude from the signal
-     * @param ampliMin    (Float) Value min of the amplitude from the signal
-     * @param dt          (ArrayList<Integer>) Delay of the indirect Signals
-     * @param ar          (ArrayList<Float>) Attenuation of the indirect Signals amplitude
+     * @param codetype      (String) code type of the received information
+     * @param nbEchTpsBit   (Integer) number of samples per bit
+     * @param ampliMax      (Float) Value max of the amplitude from the signal
+     * @param ampliMin      (Float) Value min of the amplitude from the signal
+     * @param dt            (ArrayList<Integer>) Delay of the indirect Signals
+     * @param ar            (ArrayList<Float>) Attenuation of the indirect Signals amplitude
+     * @param fixMultiPaths (Boolean) Indicate the use of the correction for multi paths
      */
     public Recepteur(String codetype, Integer nbEchTpsBit, Float ampliMax, Float ampliMin, ArrayList<Integer> dt,
-                     ArrayList<Float> ar) {
+                     ArrayList<Float> ar, Boolean fixMultiPaths) {
         super();
         this.codeType = codetype;
         this.nbEchTpsBit = nbEchTpsBit;
@@ -46,7 +48,8 @@ public class Recepteur extends Transmetteur<Float, Boolean> {
         this.seuilMax = ampliMax;
         this.seuilMin = ampliMin;
         this.dt = (ArrayList<Integer>) dt.clone();
-        this.ar = (ArrayList<Float>) dt.clone();
+        this.ar = (ArrayList<Float>) ar.clone();
+        this.fixMultiPaths = fixMultiPaths;
         this.nbElements = 0;
     }
 
@@ -60,16 +63,19 @@ public class Recepteur extends Transmetteur<Float, Boolean> {
     public void recevoir(Information<Float> information) throws InformationNonConforme {
         this.informationRecue = information;
         this.nbElements = information.nbElements() - Collections.max(dt);
+        if (dt.get(0) != 0 && ar.get(0) != 0f && fixMultiPaths) {
+            information = fixMultiPaths(information);
+        }
 
         switch (codeType) {
             case "NRZ":
-                this.informationEmise = nrzToLogic(this.informationRecue);
+                this.informationEmise = nrzToLogic(information);
                 break;
             case "NRZT":
-                this.informationEmise = nrztToLogic(this.informationRecue);
+                this.informationEmise = nrztToLogic(information);
                 break;
             case "RZ":
-                this.informationEmise = rzToLogic(this.informationRecue);
+                this.informationEmise = rzToLogic(information);
                 break;
             default:
                 throw new InformationNonConforme("Wrong Code Type given : " + codeType);
@@ -186,4 +192,30 @@ public class Recepteur extends Transmetteur<Float, Boolean> {
         }
     }
 
+    /**
+     * Corrects the multi paths generated in the transmitter
+     *
+     * @param information (Information<Float>) Information to be corrected
+     * @return Information<Float>
+     */
+    private Information<Float> fixMultiPaths(Information<Float> information) {
+        System.out.println("USE OF MP");
+        Information<Float> newInformation = new Information<>();
+        for (int i = 0; i < nbElements; i++) {
+            for (int k = 0; k < dt.size(); k++) {
+                if (i >= newInformation.nbElements()) {
+                    if (i - dt.get(k) < 0) {
+                        newInformation.add(information.iemeElement(i));
+                    } else {
+                        newInformation.add(information.iemeElement(i) - ar.get(k) * newInformation.iemeElement(i - dt.get(k)));
+                    }
+                } else if (i - dt.get(k) >= 0) {
+                    newInformation.setIemeElement(i,
+                            newInformation.iemeElement(i) - ar.get(k) * newInformation.iemeElement(i - dt.get(k)));
+
+                }
+            }
+        }
+        return newInformation;
+    }
 }

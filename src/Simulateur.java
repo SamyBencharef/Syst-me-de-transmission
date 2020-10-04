@@ -2,6 +2,7 @@ import codeur.Codeur;
 import decodeur.Decodeur;
 import emetteurs.Emetteur;
 import information.Information;
+import recepteurs.Filtre;
 import recepteurs.Recepteur;
 import sources.*;
 import destinations.*;
@@ -82,9 +83,17 @@ public class Simulateur {
      */
     private ArrayList<Float> ar = new ArrayList<>();
     /**
-     * La valeur de l'amplitude relative du signal de trajet indirect par rapport au trajet direct TP 5
+     * Indique l'utilisation d'un codeur dans la chaîne de transmission direct TP 5
      */
     private Boolean codeur = false;
+    /**
+     * Indique l'utilisation du correcteur de multi-trajets (optionnel)
+     */
+    private Boolean fixMultiPaths = false;
+    /**
+     * Indique l'utilisation du filtre (optionnel)
+     */
+    private Boolean filter = false;
 
 
     /**
@@ -259,6 +268,10 @@ public class Simulateur {
                 }
             } else if (args[i].matches("-codeur")) {
                 codeur = true;
+            } else if (args[i].matches("-FMP")) {
+                fixMultiPaths = true;
+            } else if (args[i].matches("-F")) {
+                filter = true;
             } else {
                 throw new ArgumentsException("Option invalide :" + args[i]);
             }
@@ -377,7 +390,7 @@ public class Simulateur {
         dt.add(0);
 
         Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
-        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar, fixMultiPaths);
         TransmetteurParfaitAnalogique transmetteurAnalogique = new TransmetteurParfaitAnalogique();
         destination = new DestinationFinale();
 
@@ -424,7 +437,7 @@ public class Simulateur {
         dt.add(0);
 
         Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
-        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar, fixMultiPaths);
         TransmetteurBruiteAnalogique transmetteurAnalogique = new TransmetteurBruiteAnalogique(snrpb, ne, hist);
         if (seed != null) {
             transmetteurAnalogique =
@@ -468,8 +481,9 @@ public class Simulateur {
         else {
             source = new SourceFixe(messageString);
         }
+        Filtre filter = new Filtre(waveForm, ne, ampliMax, ampliMin);
         Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
-        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar, fixMultiPaths);
         TransmetteurMultiTrajetsBruiteAnalogique transmetteurAnalogique;
         if (seed != null) {
             transmetteurAnalogique = new TransmetteurMultiTrajetsBruiteAnalogique(ne, snrpb, dt, ar, seed, hist);
@@ -481,7 +495,12 @@ public class Simulateur {
         // Connections between components
         source.connecter(emetteur);
         emetteur.connecter(transmetteurAnalogique);
-        transmetteurAnalogique.connecter(recepteur);
+        if (this.filter) {
+            transmetteurAnalogique.connecter(filter);
+            filter.connecter(recepteur);
+        } else {
+            transmetteurAnalogique.connecter(recepteur);
+        }
         recepteur.connecter(destination);
 
         // Display graphics
@@ -516,8 +535,9 @@ public class Simulateur {
         }
         Codeur encoder = new Codeur();
         Decodeur decoder = new Decodeur();
+        Filtre filter = new Filtre(waveForm, ne, ampliMax, ampliMin);
         Emetteur emetteur = new Emetteur(waveForm, ne, ampliMax, ampliMin);
-        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar);
+        Recepteur recepteur = new Recepteur(waveForm, ne, ampliMax, ampliMin, dt, ar, fixMultiPaths);
         TransmetteurMultiTrajetsBruiteAnalogique transmetteurAnalogique;
         if (seed != null) {
             transmetteurAnalogique = new TransmetteurMultiTrajetsBruiteAnalogique(ne, snrpb, dt, ar, seed, hist);
@@ -538,7 +558,12 @@ public class Simulateur {
             recepteur.connecter(destination);
         }
         emetteur.connecter(transmetteurAnalogique);
-        transmetteurAnalogique.connecter(recepteur);
+        if (this.filter) {
+            transmetteurAnalogique.connecter(filter);
+            filter.connecter(recepteur);
+        } else {
+            transmetteurAnalogique.connecter(recepteur);
+        }
 
         // Display graphics
         if (affichage) {
