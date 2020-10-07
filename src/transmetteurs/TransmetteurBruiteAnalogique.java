@@ -77,22 +77,42 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
      * @return noisy information.
      */
     private Information<Float> addNoise(Information<Float> information) {
-        Information<Float> noisyInformation = new Information<>();
+        Information<Float> noisyInformation;
         if (snrpb != null) {
             ArrayList<Float> arrayNoise = new ArrayList<>();
             Random ran = new Random();
             if (seed != null) {
                 ran = new Random(seed);
             }
-            float standardDeviation = (float) Math.sqrt((getSignalPower(information)) / (2 * Math.pow(10,
-                    snrpb / 10)));
-            // Mix the noise and information
-            for (int i = 0; i < information.nbElements(); i++) {
-                float noise =
-                        (float) (standardDeviation * Math.sqrt(-2 * Math.log(1 - ran.nextFloat())) * Math.cos(2 * Math.PI * ran.nextFloat()));
-                arrayNoise.add(noise);
-                noisyInformation.add(noise + information.iemeElement(i));
+            double puissanceSignal = 0;
+            for (int i=0 ; i < informationRecue.nbElements() ; i++){
+                puissanceSignal += Math.pow((double)informationRecue.iemeElement(i),2);
             }
+            puissanceSignal=puissanceSignal/informationRecue.nbElements();
+            float originalPuissanceSignal = (float) puissanceSignal;
+            puissanceSignal = 10*Math.log(puissanceSignal);
+            double puissanceBruit = puissanceSignal - snrpb;
+            puissanceBruit = Math.pow(10,(puissanceBruit/10));
+            float a1 = 0;
+            float a2 = 0;
+
+            float varianceBruit = (float) Math.sqrt(puissanceBruit);
+            Random genRand = new Random();
+            float bruitGenere;
+            Float[] signalBruite = new Float[informationRecue.nbElements()];
+
+            float[] bruit = new float[informationRecue.nbElements()];
+
+            for(int i=0 ; i<informationRecue.nbElements() ; i++){
+                a1 = genRand.nextFloat();
+                a2 = genRand.nextFloat();
+                bruitGenere = (float) (varianceBruit*Math.sqrt((-2)*Math.log(1-a1))*Math.cos(2*Math.PI*a2));
+                bruit[i]=bruitGenere;
+                signalBruite[i]=bruitGenere+(float)informationRecue.iemeElement(i);
+
+            }
+
+            noisyInformation = new Information<>(signalBruite);
             // Display the gaussian noise as a density probability
             if (histogram) showNoise(arrayNoise);
             float noise = 0f;
@@ -105,6 +125,7 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
 //            System.out.println("nbEchTpsBit : " + nbEchTpsBit);
 //            System.out.println("Calculated snrpb " + 10 * Math.log10((getSignalPower(information) * nbEchTpsBit) / (2 * noise)));
         } else {
+            noisyInformation = new Information<>();
             noisyInformation = information;
         }
         return noisyInformation;
