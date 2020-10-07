@@ -567,15 +567,19 @@ public class Simulateur {
 
         // Display graphics
         if (affichage) {
+            SondeLogique sondeEncoder = new SondeLogique("SEND MESSAGE LOGICA AT ENCODER", 100);
             SondeLogique sonde1 = new SondeLogique("SEND MESSAGE LOGICAL", 100);
             SondeAnalogique sonde2 = new SondeAnalogique("SEND MESSAGE ANALOGICAL");
             SondeAnalogique sonde3 = new SondeAnalogique("RECEIVED MESSAGE ANALOGICAL");
             SondeLogique sonde4 = new SondeLogique("RECEVEID MESSAGE LOGICAL", 100);
+            SondeLogique sondeRecepteur = new SondeLogique("SEND MESSAGE LOGICA AT RECEPTEUR", 100);
             source.connecter(sonde1);
             emetteur.connecter(sonde2);
             transmetteurAnalogique.connecter(sonde3);
             if (codeur) {
+                encoder.connecter(sondeEncoder);
                 decoder.connecter(sonde4);
+                recepteur.connecter(sondeRecepteur);
             } else {
                 recepteur.connecter(sonde4);
             }
