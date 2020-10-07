@@ -84,34 +84,23 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
             if (seed != null) {
                 ran = new Random(seed);
             }
-            double puissanceSignal = 0;
-            for (int i=0 ; i < informationRecue.nbElements() ; i++){
-                puissanceSignal += Math.pow((double)informationRecue.iemeElement(i),2);
-            }
-            puissanceSignal=puissanceSignal/informationRecue.nbElements();
-            float originalPuissanceSignal = (float) puissanceSignal;
-            puissanceSignal = 10*Math.log(puissanceSignal);
-            double puissanceBruit = puissanceSignal - snrpb;
-            puissanceBruit = Math.pow(10,(puissanceBruit/10));
-            float a1 = 0;
-            float a2 = 0;
-
-            float varianceBruit = (float) Math.sqrt(puissanceBruit);
-            Random genRand = new Random();
-            float bruitGenere;
+            float powerSignal = (float) (10 * Math.log(getSignalPower(information)));
+            double powerNoise = powerSignal - snrpb;
+            powerNoise = Math.pow(10, (powerNoise / 10));
+            float stantardDeviatioon = (float) Math.sqrt(powerNoise);
+            float a1;
+            float a2;
             Float[] signalBruite = new Float[informationRecue.nbElements()];
 
-            float[] bruit = new float[informationRecue.nbElements()];
-
-            for(int i=0 ; i<informationRecue.nbElements() ; i++){
-                a1 = genRand.nextFloat();
-                a2 = genRand.nextFloat();
-                bruitGenere = (float) (varianceBruit*Math.sqrt((-2)*Math.log(1-a1))*Math.cos(2*Math.PI*a2));
-                bruit[i]=bruitGenere;
-                signalBruite[i]=bruitGenere+(float)informationRecue.iemeElement(i);
+            for (int i = 0; i < informationRecue.nbElements(); i++) {
+                a1 = ran.nextFloat();
+                a2 = ran.nextFloat();
+                float noise =
+                        (float) (stantardDeviatioon * Math.sqrt((-2) * Math.log(1 - a1)) * Math.cos(2 * Math.PI * a2));
+                arrayNoise.add(noise);
+                signalBruite[i] = noise + informationRecue.iemeElement(i);
 
             }
-
             noisyInformation = new Information<>(signalBruite);
             // Display the gaussian noise as a density probability
             if (histogram) showNoise(arrayNoise);
